@@ -1,0 +1,16 @@
+
+# connect to openocd
+target extended-remote :3333
+
+define reload
+    load build/main.elf
+    # reset, program, reset via openocd
+    monitor reset halt
+    monitor program build/main.elf
+    monitor reset init
+end
+document reload
+Reload elf and reflash
+end
+
+reload

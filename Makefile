@@ -1,5 +1,6 @@
 
-BUILDDIR ?= build
+# .gdb-startup assumes the elf is here
+BUILDDIR = build
 TARGET = $(BUILDDIR)/main.elf
 
 BOARD ?= stm32f4discovery
@@ -7,15 +8,15 @@ BOARD ?= stm32f4discovery
 ENABLE_SEMIHOSTING ?= 1
 
 ifeq (stm32f4discovery,$(BOARD))
-LDSCRIPT ?= ld-scripts/stm32f407.ld
+LDSCRIPT ?= devices/stm32f407.ld
 ARCHFLAGS ?= -mcpu=cortex-m4
-OPENOCD_CFG ?= stm32f4.openocd.cfg
+OPENOCD_CFG ?= devices/stm32f4.openocd.cfg
 endif
 
 ifeq (kl02,$(BOARD))
 # not really a thing, pass
 $(error $(BOARD) not currently supported)
-LDSCRIPT ?= ld-scripts/kl02.ld
+LDSCRIPT ?= devices/kl02.ld
 ARCHFLAGS ?= -mcpu=cortex-m0plus
 OPENOCD_CFG ?=
 endif
@@ -74,6 +75,6 @@ openocd: build
 	openocd -f $(OPENOCD_CFG)
 
 gdb: $(TARGET)
-	arm-none-eabi-gdb-py $(TARGET) -ex "source gdb-startup"
+	arm-none-eabi-gdb-py $(TARGET) -ex "source .gdb-startup"
 
 .PHONY: all clean openocd gdb

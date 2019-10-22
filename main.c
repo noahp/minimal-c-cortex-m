@@ -9,7 +9,7 @@ int main(void) {
   // don't buffer on stdout
   setbuf(stdout, NULL);
 
-  printf("Hello there!\n");
+  printf("🦄 Hello there!\n");
 #endif
 
   while (1) {
