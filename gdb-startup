@@ -1,0 +1,8 @@
+
+# connect to openocd
+target extended-remote :3333
+
+# reset, program, reset via openocd
+monitor reset halt
+monitor program build/main.elf
+monitor reset init
