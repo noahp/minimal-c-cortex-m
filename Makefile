@@ -48,7 +48,7 @@ RM = rm -rf
 
 SRCS = \
     main.c \
-    startup.c \
+    interrupts.c \
 
 OBJS = $(patsubst %.c, %.o, $(SRCS))
 OBJS := $(addprefix $(BUILDDIR)/,$(OBJS))
