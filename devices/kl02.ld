@@ -3,9 +3,13 @@ SEARCH_DIR(.)
 
 MEMORY
 {
-  INTERRUPTS (rx)  : ORIGIN = 0x0,          LENGTH = 192        /* 192 */
-  FLASHCONFIG(rx)  : ORIGIN = 0x400,        LENGTH = 16         /* 16 bytes */
-  FLASH       (rx) : ORIGIN = 0x410,        LENGTH = 32K - 0x410
+  /* cortex-m0+ supports up to 32 external interrupts plus 16 built in; see:
+   * https://developer.arm.com/ip-products/processors/cortex-m
+   * this could be sized down if there's fewer ISR's used by the app */
+  INTERRUPTS (rx)  : ORIGIN = 0x0,          LENGTH = (16 + 32) * 4
+  /* FLASHCONFIG section is 16 bytes. contains OTP flags, watch out! */
+  FLASHCONFIG(rx)  : ORIGIN = 0x400,        LENGTH = 16
+  FLASH       (rx) : ORIGIN = 0x410,        LENGTH = 32K - ORIGIN(FLASH)
   RAM        (rwx) : ORIGIN = 0x1FFFFC00,   LENGTH = 1K
   RAM2       (rwx) : ORIGIN = 0x20000000,   LENGTH = 3K
 }

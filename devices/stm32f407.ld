@@ -1,29 +1,33 @@
 OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 SEARCH_DIR(.)
 
-/*************************************************************************************
- * Memory layout for STM32 linking
- *
- * Defines where to access the flash and sram for linking purposes. Here's the overall
- * layout (from https://github.com/trebisky/stm32f103/blob/master/blink1/blink.lds).
- *
- * 0x00000000 - 0x07ffffff - aliased to flash or sys memory depending on BOOT jumpers.
- * 0x08000000 - 0x0800ffff - Flash.
- * 0x1ffff000 - 0x1ffff7ff - Boot firmware in system memory.
- * 0x1ffff800 - 0x1fffffff - Option bytes.
- * 0x20000000 - 0x20004fff - SRAM.
- * 0x40000000 - 0x40023400 - Peripherals
- */
+/* STM32F407 memory regions as follows:
 
+0x2001 C000 - 0x2001 FFFF SRAM2 (16 KB)
+0x2000 0000 - 0x2001 BFFF SRAM1 (112 KB)
+0x1FFF 0000 - 0x1FFF 77FF System memory System memory System memory System memory
+0x0810 0000 - 0x0FFF FFFF Reserved Reserved Reserved Reserved
+0x0800 0000 - 0x080F FFFF Flash memory Flash memory Flash memory Flash memory
+*/
+
+
+/* Create a dedicated 512 * 4 byte section for the interrupt table, so we don't
+ * end up placing code or ro data there */
 MEMORY
 {
-  FLASH (rx)      : ORIGIN = 0x08000000, LENGTH = 1024K
-  RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 192K
+  /* cortex-m4 supports up to 240 external interrupts plus 16 built in; see:
+   * https://developer.arm.com/ip-products/processors/cortex-m
+   * this could be sized down if there's fewer ISR's used by the app */
+  INTERRUPTS (rx) : ORIGIN = 0x08000000, LENGTH = (16 * 240) * 4
+  FLASH (rx)      :
+      ORIGIN = ORIGIN(INTERRUPTS) + LENGTH(INTERRUPTS),
+      LENGTH = 1024K - LENGTH(INTERRUPTS)
+  RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 112K
 }
 
 STACK_SIZE = 0x100;
 
-_estack = 0x20020000;    /* end of 128K RAM on AHB bus*/
+_estack = ORIGIN(RAM) + LENGTH(RAM);
 
 /* Section Definitions */
 SECTIONS
@@ -33,7 +37,7 @@ SECTIONS
         . = ALIGN(4);
         KEEP(*(.isr_vector .isr_vector.*))
         . = ALIGN(4);
-    } > FLASH
+    } > INTERRUPTS
 
     .text :
     {

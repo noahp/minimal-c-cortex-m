@@ -1,4 +1,7 @@
-
+//! This file contains interrupt definitions:
+//! - vector table
+//! - interrupt service routines
+//! - reset handler (system init)
 #include <stdint.h>
 
 extern int main(void);
@@ -17,7 +20,7 @@ extern uint32_t _ebss;
 // End address for stack
 extern uint32_t _estack;
 
-// Prevent inlining to avoid persisting any variables on stack
+// Prevent inlining to avoid persisting any stack allocations
 __attribute__((noinline)) static void prv_cinit(void) {
   // Initialize data and bss
   // Copy the data segment initializers from flash to SRAM
