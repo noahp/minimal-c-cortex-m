@@ -14,8 +14,7 @@ OPENOCD_CFG ?= devices/stm32f4.openocd.cfg
 endif
 
 ifeq (kl02,$(BOARD))
-# not really a thing, pass
-$(error $(BOARD) not currently supported)
+$(warning $(BOARD) flashing/debug not currently supported)
 LDSCRIPT ?= devices/kl02.ld
 ARCHFLAGS ?= -mcpu=cortex-m0plus
 OPENOCD_CFG ?=

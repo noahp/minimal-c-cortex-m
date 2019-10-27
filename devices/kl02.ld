@@ -5,7 +5,7 @@ MEMORY
 {
   INTERRUPTS (rx)  : ORIGIN = 0x0,          LENGTH = 192        /* 192 */
   FLASHCONFIG(rx)  : ORIGIN = 0x400,        LENGTH = 16         /* 16 bytes */
-  TEXT       (rx)  : ORIGIN = 0x410,        LENGTH = 32K - 0x410
+  FLASH       (rx) : ORIGIN = 0x410,        LENGTH = 32K - 0x410
   RAM        (rwx) : ORIGIN = 0x1FFFFC00,   LENGTH = 1K
   RAM2       (rwx) : ORIGIN = 0x20000000,   LENGTH = 3K
 }
@@ -30,17 +30,17 @@ SECTIONS
         *(.text .text.* .gnu.linkonce.t.*)
         *(.glue_7t) *(.glue_7)
         *(.rodata .rodata* .gnu.linkonce.r.*)
-    } > TEXT
+    } > FLASH
 
     .ARM.extab :
     {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
-    } > TEXT
+    } > FLASH
 
     .ARM.exidx :
     {
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-    } > TEXT
+    } > FLASH
 
     . = ALIGN(4);
     _etext = .;
