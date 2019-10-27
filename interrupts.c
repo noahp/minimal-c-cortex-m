@@ -45,21 +45,33 @@ void ResetHandler(void) {
     ;
 }
 
-// DefaultIntHandler is used for unpopulated interrupts
-static void DefaultIntHandler(void) {
+// DefaultHandler is used for unpopulated interrupts
+static void DefaultHandler(void) {
   __asm__("bkpt");
   // Go into an infinite loop.
   while (1)
     ;
 }
 
-static void NMIIntHandler(void) { DefaultIntHandler(); }
-static void HardFaultIntHandler(void) { DefaultIntHandler(); }
+static void NMIHandler(void) { DefaultHandler(); }
+static void HardFaultHandler(void) { DefaultHandler(); }
 
-// A minimal vector table for a Cortex M.
+// A minimal vector table for a Cortex M. Uncomment/add additional vectors if
+// needed.
 __attribute__((section(".isr_vector"))) void (*const g_pfnVectors[])(void) = {
     (void *)(&_estack), // initial stack pointer
     ResetHandler,
-    NMIIntHandler,
-    HardFaultIntHandler,
+    NMIHandler,
+    HardFaultHandler,
+    // MemManageHandler,
+    // BusFaultHandler,
+    // UsageFaultHandler,
+    // 0,
+    // 0,
+    // 0,
+    // 0,
+    // SVCallHandler,
+    // DbgMonHandler,
+    // 0,
+    // SysTickHandler,
 };
