@@ -7,17 +7,31 @@ BOARD ?= stm32f4discovery
 
 ENABLE_SEMIHOSTING ?= 1
 
+# TODO cleaner board mux
+
+ifeq (apollo3_sparkfun,$(BOARD))
+# Sparkfun Artemis Black board for Ambiq Apollo 3
+# https://www.sparkfun.com/products/retired/15411
+LDSCRIPT = devices/ambiq-apollo3.ld
+ARCHFLAGS += -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16
+FLASH_CMD = \
+    JLinkGDBServerCLExe -USB -device ama3b1kk-kcr -endian little -if SWD \
+    -speed auto -noir -LocalhostOnly -port 3333
+GDB_RELOAD_CMD = jlink-reload
+endif
+
 ifeq (stm32f4discovery,$(BOARD))
-LDSCRIPT ?= devices/stm32f407.ld
-ARCHFLAGS ?= -mcpu=cortex-m4
-OPENOCD_CFG ?= devices/stm32f4.openocd.cfg
+LDSCRIPT = devices/stm32f407.ld
+ARCHFLAGS += -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16
+FLASH_CMD = openocd -f devices/stm32f4.openocd.cfg
+GDB_RELOAD_CMD = openocd-reload
 endif
 
 ifeq (kl02,$(BOARD))
-$(warning $(BOARD) flashing/debug not currently supported)
-LDSCRIPT ?= devices/kl02.ld
-ARCHFLAGS ?= -mcpu=cortex-m0plus
-OPENOCD_CFG ?=
+LDSCRIPT = devices/kl02.ld
+ARCHFLAGS += -mcpu=cortex-m0plus
+FLASH_CMD = @ echo $(BOARD) flashing/debug not currently supported
+GDB_RELOAD_CMD = jlink-reload
 endif
 
 CFLAGS += $(ARCHFLAGS)
@@ -70,10 +84,10 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
 	$(SIZE) $(TARGET)
 
-openocd: build
-	openocd -f $(OPENOCD_CFG)
+flash: $(TARGET)
+	$(FLASH_CMD)
 
 gdb: $(TARGET)
-	arm-none-eabi-gdb-py $(TARGET) -ex "source .gdb-startup"
+	arm-none-eabi-gdb-py $(TARGET) -ex "source .gdb-startup" -ex $(GDB_RELOAD_CMD)
 
-.PHONY: all clean openocd gdb
+.PHONY: all clean flash gdb

@@ -2,15 +2,25 @@
 # connect to openocd
 target extended-remote :3333
 
-define reload
+define openocd-reload
     load build/main.elf
     # reset, program, reset via openocd
     monitor reset halt
     monitor program build/main.elf
     monitor reset init
 end
-document reload
+document openocd-reload
 Reload elf and reflash
 end
 
-reload
+define jlink-reload
+    # program and reset via jlink
+    monitor reset
+    monitor semihosting enable
+    load build/main.elf
+    monitor reset
+    monitor halt
+end
+document jlink-reload
+Reload elf and reflash
+end
