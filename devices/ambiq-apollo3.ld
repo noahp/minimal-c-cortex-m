@@ -12,15 +12,21 @@
  *
  *****************************************************************************/
 
+/* cortex-m4 supports up to 240 external interrupts plus 16 built in; see:
+ * https://developer.arm.com/ip-products/processors/cortex-m
+ * this could be sized down if there's fewer ISR's used by the app */
+interrupt_region_size = (16 + 240) * 4;
+flash_origin = 0x0000C000;
+
 MEMORY
 {
   /* cortex-m4 supports up to 240 external interrupts plus 16 built in; see:
    * https://developer.arm.com/ip-products/processors/cortex-m
    * this could be sized down if there's fewer ISR's used by the app */
-  INTERRUPTS (rx) : ORIGIN = 0x0000C000, LENGTH = (16 * 240) * 4
+  INTERRUPTS (rx) : ORIGIN = flash_origin, LENGTH = interrupt_region_size
   FLASH (rx)      :
-      ORIGIN = ORIGIN(INTERRUPTS) + LENGTH(INTERRUPTS),
-      LENGTH = 960K - LENGTH(INTERRUPTS)
+      ORIGIN = flash_origin + interrupt_region_size,
+      LENGTH = 960K - interrupt_region_size
   RAM (xrw)       : ORIGIN = 0x10000000, LENGTH = 384K
 }
 

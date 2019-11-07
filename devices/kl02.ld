@@ -1,15 +1,17 @@
 OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 SEARCH_DIR(.)
 
+/* cortex-m0+ supports up to 32 external interrupts plus 16 built in; see:
+ * https://developer.arm.com/ip-products/processors/cortex-m
+ * this could be sized down if there's fewer ISR's used by the app */
+interrupt_region_size = (16 + 32) * 4;
+
 MEMORY
 {
-  /* cortex-m0+ supports up to 32 external interrupts plus 16 built in; see:
-   * https://developer.arm.com/ip-products/processors/cortex-m
-   * this could be sized down if there's fewer ISR's used by the app */
-  INTERRUPTS (rx)  : ORIGIN = 0x0,          LENGTH = (16 + 32) * 4
+  INTERRUPTS (rx)  : ORIGIN = 0x0,          LENGTH = interrupt_region_size
   /* FLASHCONFIG section is 16 bytes. contains OTP flags, watch out! */
   FLASHCONFIG(rx)  : ORIGIN = 0x400,        LENGTH = 16
-  FLASH       (rx) : ORIGIN = 0x410,        LENGTH = 32K - ORIGIN(FLASH)
+  FLASH       (rx) : ORIGIN = 0x410,        LENGTH = 32K - 0x410
   RAM        (rwx) : ORIGIN = 0x1FFFFC00,   LENGTH = 1K
   RAM2       (rwx) : ORIGIN = 0x20000000,   LENGTH = 3K
 }

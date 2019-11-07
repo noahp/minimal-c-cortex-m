@@ -10,18 +10,24 @@ SEARCH_DIR(.)
 0x0800 0000 - 0x080F FFFF Flash memory Flash memory Flash memory Flash memory
 */
 
+/* cortex-m4 supports up to 240 external interrupts plus 16 built in; see:
+ * https://developer.arm.com/ip-products/processors/cortex-m
+ * this could be sized down if there's fewer ISR's used by the app */
+interrupt_region_size = (16 + 240) * 4;
+flash_origin = 0x08000000;
 
-/* Create a dedicated 512 * 4 byte section for the interrupt table, so we don't
- * end up placing code or ro data there */
 MEMORY
 {
-  /* cortex-m4 supports up to 240 external interrupts plus 16 built in; see:
-   * https://developer.arm.com/ip-products/processors/cortex-m
-   * this could be sized down if there's fewer ISR's used by the app */
-  INTERRUPTS (rx) : ORIGIN = 0x08000000, LENGTH = (16 * 240) * 4
+  /* Note that we'd normally use ORIGIN(INTERRUPTS) and LENGTH(INTERRUPTS),
+    but this bug prevents it on some compiler releases (ex 8-2019-q3-update):
+    https://sourceware.org/bugzilla/show_bug.cgi?id=24289
+
+    So use a variable instead */
+
+  INTERRUPTS (rx) : ORIGIN = flash_origin, LENGTH = interrupt_region_size
   FLASH (rx)      :
-      ORIGIN = ORIGIN(INTERRUPTS) + LENGTH(INTERRUPTS),
-      LENGTH = 1024K - LENGTH(INTERRUPTS)
+      ORIGIN = flash_origin + interrupt_region_size,
+      LENGTH = 1024K - interrupt_region_size
   RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 112K
 }
 
