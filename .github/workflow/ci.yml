@@ -1,0 +1,20 @@
+name: Run basic builds
+
+on: [push]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Build the Docker image
+      run: docker build -t "minimal-c-cortex-m" -f .github/workflow/Dockerfile --build-arg UID=$(id -u) .
+
+    - name: Run the build
+      # build the configs we have now. hardcoded here :(
+      run: docker run -i -v"$(pwd):/mnt/workspace" -t minimal-c-cortex-m /bin/bash -c
+        "cd /mnt/workspace && for brd in apollo3_sparkfun stm32f4discovery kl02; do BOARD=$brd make clean all; done"
