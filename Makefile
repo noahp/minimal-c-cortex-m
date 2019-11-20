@@ -53,7 +53,7 @@ CFLAGS += -DENABLE_SEMIHOSTING=0
 endif
 
 LDFLAGS += -T$(LDSCRIPT)
-LDFLAGS += -Wl,--gc-sections,-Map,$(TARGET).map
+LDFLAGS += -Wl,--gc-sections,-Map,$(TARGET).map,--print-memory-usage
 
 CC = arm-none-eabi-gcc
 LD = arm-none-eabi-gcc

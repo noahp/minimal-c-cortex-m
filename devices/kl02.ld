@@ -70,7 +70,7 @@ SECTIONS
         _ebss = . ;
     } > RAM
 
-    .heap (COPY):
+    .heap (NOLOAD):
     {
         __end__ = .;
         end = __end__;

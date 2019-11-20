@@ -87,7 +87,7 @@ SECTIONS
         __bss_end__ = _ebss;
     } > RAM
 
-    .heap (COPY):
+    .heap (NOLOAD):
     {
         . = ALIGN(4);
         PROVIDE ( end = . );
