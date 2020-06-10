@@ -25,7 +25,7 @@ CFLAGS += $(ARCHFLAGS)
 
 CFLAGS += -ffunction-sections -fdata-sections
 
-CFLAGS += -g3
+CFLAGS += -g3 -Os
 
 CFLAGS += -Wall -Werror
 
