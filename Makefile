@@ -34,15 +34,22 @@ FLASH_CMD = @ echo $(BOARD) flashing/debug not currently supported
 GDB_RELOAD_CMD = jlink-reload
 endif
 
+ifeq (samd11,$(BOARD))
+LDSCRIPT = devices/samd11d14am_flash.ld
+ARCHFLAGS += -mcpu=cortex-m0plus
+endif
+
 CFLAGS += $(ARCHFLAGS)
 
 CFLAGS += -ffunction-sections -fdata-sections
 
-CFLAGS += -g3
+CFLAGS += -ggdb3
 
 CFLAGS += -Wall -Werror
 
 CFLAGS += -mlittle-endian -mthumb -mthumb-interwork
+
+LDFLAGS += -T$(LDSCRIPT)
 
 ifeq (1,$(ENABLE_SEMIHOSTING))
 LDFLAGS += --specs=rdimon.specs -lc -lrdimon
@@ -52,7 +59,6 @@ LDFLAGS += --specs=nano.specs
 CFLAGS += -DENABLE_SEMIHOSTING=0
 endif
 
-LDFLAGS += -T$(LDSCRIPT)
 LDFLAGS += -Wl,--gc-sections,-Map,$(TARGET).map,--print-memory-usage
 
 CC = arm-none-eabi-gcc
@@ -80,7 +86,7 @@ clean:
 $(BUILDDIR)/%.o: %.c | $(BUILDDIR)
 	$(CC) $(CFLAGS) -c $^ -o $@
 
-$(TARGET): $(OBJS)
+$(TARGET): $(OBJS) $(LDSCRIPT)
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
 	$(SIZE) $(TARGET)
 
