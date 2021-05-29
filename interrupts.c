@@ -34,24 +34,23 @@ __attribute__((noinline)) static void prv_cinit(void) {
   }
 }
 
-__attribute__((noreturn))
-void ResetHandler(void) {
+__attribute__((noreturn)) void ResetHandler(void) {
   prv_cinit();
 
   // Call the application's entry point.
   (void)main();
 
   // shouldn't return
-  while (1)
-    ;
+  while (1) {
+  };
 }
 
 // DefaultHandler is used for unpopulated interrupts
 static void DefaultHandler(void) {
   __asm__("bkpt");
   // Go into an infinite loop.
-  while (1)
-    ;
+  while (1) {
+  };
 }
 
 static void NMIHandler(void) { DefaultHandler(); }

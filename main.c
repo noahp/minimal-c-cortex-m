@@ -4,7 +4,9 @@ extern void initialise_monitor_handles(void);
 
 int main(void) {
   char yolo[128];
-  sprintf(yolo, "boom %.3f", 123.4f);
+
+  // should be snprintf_s but newlib doesn't have it as of 3.3.0
+  snprintf(yolo, sizeof(yolo) - 1, "boom %.3f", 123.4f); // NOLINT
 
 #if ENABLE_SEMIHOSTING
   initialise_monitor_handles();

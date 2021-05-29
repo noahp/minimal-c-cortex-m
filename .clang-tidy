@@ -1,0 +1,117 @@
+---
+Checks:          'clang-diagnostic-*,clang-analyzer-*,modernize-*,performance-*,portability-*,readability-*,-readability-magic-numbers,-readability-uppercase-literal-suffix'
+WarningsAsErrors: 'clang-diagnostic-*,clang-analyzer-*,performance-*,portability-*'
+HeaderFilterRegex: ''
+AnalyzeTemporaryDtors: false
+FormatStyle:     none
+User:            noah
+CheckOptions:
+  - key:             cert-dcl16-c.NewSuffixes
+    value:           'L;LL;LU;LLU'
+  - key:             cert-oop54-cpp.WarnOnlyIfThisHasSuspiciousField
+    value:           '0'
+  - key:             cppcoreguidelines-explicit-virtual-functions.IgnoreDestructors
+    value:           '1'
+  - key:             cppcoreguidelines-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
+    value:           '1'
+  - key:             google-readability-braces-around-statements.ShortStatementLines
+    value:           '1'
+  - key:             google-readability-function-size.StatementThreshold
+    value:           '800'
+  - key:             google-readability-namespace-comments.ShortNamespaceLines
+    value:           '10'
+  - key:             google-readability-namespace-comments.SpacesBeforeComments
+    value:           '2'
+  - key:             modernize-loop-convert.MaxCopySize
+    value:           '16'
+  - key:             modernize-loop-convert.MinConfidence
+    value:           reasonable
+  - key:             modernize-loop-convert.NamingStyle
+    value:           CamelCase
+  - key:             modernize-pass-by-value.IncludeStyle
+    value:           llvm
+  - key:             modernize-replace-auto-ptr.IncludeStyle
+    value:           llvm
+  - key:             modernize-use-nullptr.NullMacros
+    value:           'NULL'
+  - key:             performance-faster-string-find.StringLikeClasses
+    value:           'std::basic_string'
+  - key:             performance-for-range-copy.AllowedTypes
+    value:           ''
+  - key:             performance-for-range-copy.WarnOnAllAutoCopies
+    value:           '0'
+  - key:             performance-inefficient-string-concatenation.StrictMode
+    value:           '0'
+  - key:             performance-inefficient-vector-operation.EnableProto
+    value:           '0'
+  - key:             performance-inefficient-vector-operation.VectorLikeClasses
+    value:           '::std::vector'
+  - key:             performance-move-const-arg.CheckTriviallyCopyableMove
+    value:           '1'
+  - key:             performance-move-constructor-init.IncludeStyle
+    value:           llvm
+  - key:             performance-no-automatic-move.AllowedTypes
+    value:           ''
+  - key:             performance-type-promotion-in-math-fn.IncludeStyle
+    value:           llvm
+  - key:             performance-unnecessary-copy-initialization.AllowedTypes
+    value:           ''
+  - key:             performance-unnecessary-value-param.AllowedTypes
+    value:           ''
+  - key:             performance-unnecessary-value-param.IncludeStyle
+    value:           llvm
+  - key:             portability-simd-intrinsics.Std
+    value:           ''
+  - key:             portability-simd-intrinsics.Suggest
+    value:           '0'
+  - key:             readability-braces-around-statements.ShortStatementLines
+    value:           '0'
+  - key:             readability-else-after-return.WarnOnUnfixable
+    value:           '1'
+  - key:             readability-function-size.BranchThreshold
+    value:           '4294967295'
+  - key:             readability-function-size.LineThreshold
+    value:           '4294967295'
+  - key:             readability-function-size.NestingThreshold
+    value:           '4294967295'
+  - key:             readability-function-size.ParameterThreshold
+    value:           '4294967295'
+  - key:             readability-function-size.StatementThreshold
+    value:           '800'
+  - key:             readability-function-size.VariableThreshold
+    value:           '4294967295'
+  - key:             readability-identifier-naming.IgnoreFailedSplit
+    value:           '0'
+  - key:             readability-implicit-bool-conversion.AllowIntegerConditions
+    value:           '0'
+  - key:             readability-implicit-bool-conversion.AllowPointerConditions
+    value:           '0'
+  - key:             readability-inconsistent-declaration-parameter-name.IgnoreMacros
+    value:           '1'
+  - key:             readability-inconsistent-declaration-parameter-name.Strict
+    value:           '0'
+  - key:             readability-magic-numbers.IgnoredFloatingPointValues
+    value:           '1.0;100.0;'
+  - key:             readability-magic-numbers.IgnoredIntegerValues
+    value:           '1;2;3;4;'
+  - key:             readability-redundant-member-init.IgnoreBaseInCopyConstructors
+    value:           '0'
+  - key:             readability-redundant-smartptr-get.IgnoreMacros
+    value:           '1'
+  - key:             readability-redundant-string-init.StringNames
+    value:           '::std::basic_string'
+  - key:             readability-simplify-boolean-expr.ChainedConditionalAssignment
+    value:           '0'
+  - key:             readability-simplify-boolean-expr.ChainedConditionalReturn
+    value:           '0'
+  - key:             readability-simplify-subscript-expr.Types
+    value:           '::std::basic_string;::std::basic_string_view;::std::vector;::std::array'
+  - key:             readability-static-accessed-through-instance.NameSpecifierNestingThreshold
+    value:           '3'
+  - key:             readability-uppercase-literal-suffix.IgnoreMacros
+    value:           '1'
+  - key:             readability-uppercase-literal-suffix.NewSuffixes
+    value:           ''
+  - key:             readability-uppercase-literal-suffix
+    value:           '0'
+...

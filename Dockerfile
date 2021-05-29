@@ -4,12 +4,15 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get -y install \
     build-essential \
-    clang \
-    clang-format \
+    cppcheck \
+    clang-11 \
+    clang-format-11 \
+    clang-tidy-11 \
     git \
-    lld \
-    llvm \
+    lld-11 \
+    llvm-11 \
     pv \
+    python3-pip \
     wget
 
 ARG ARM_URL=https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2?revision=05382cca-1721-44e1-ae19-1e7c3dc96118&la=en&hash=D7C9D18FCA2DD9F894FD9F3C3DC9228498FA281A
@@ -32,5 +35,7 @@ USER ${UNAME}
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
 ENV PATH /home/${UNAME}/.local/bin:$PATH
+
+RUN pip3 install pre-commit==2.11.1 compiledb==0.10.1
 
 WORKDIR /mnt/workspace

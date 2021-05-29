@@ -77,7 +77,7 @@ endif
 
 CFLAGS += $(ARCHFLAGS)
 
-CFLAGS += -ggdb3
+CFLAGS += -ggdb3 -std=c11
 
 CFLAGS += -Wall -Werror
 

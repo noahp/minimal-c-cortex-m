@@ -2,3 +2,4 @@
 *.elf
 *.hex
 *.map
+/compile_commands.json
