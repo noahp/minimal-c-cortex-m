@@ -1,3 +1,5 @@
+ENTRY(ResetHandler)
+
 OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 SEARCH_DIR(.)
 
@@ -24,10 +26,10 @@ MEMORY
 
     So use a variable instead */
 
-  INTERRUPTS (rx) : ORIGIN = flash_origin, LENGTH = interrupt_region_size
+  INTERRUPTS (rx) : ORIGIN = 0x08000000 /*flash_origin*/, LENGTH = (16 + 240) * 4 /*interrupt_region_size*/
   FLASH (rx)      :
-      ORIGIN = flash_origin + interrupt_region_size,
-      LENGTH = 1024K - interrupt_region_size
+      ORIGIN = ORIGIN(INTERRUPTS) + LENGTH(INTERRUPTS),
+      LENGTH = 1024K - LENGTH(INTERRUPTS)
   RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 112K
 }
 

@@ -34,6 +34,7 @@ __attribute__((noinline)) static void prv_cinit(void) {
   }
 }
 
+__attribute__((noreturn))
 void ResetHandler(void) {
   prv_cinit();
 

@@ -1,4 +1,12 @@
 
+ARM_CC ?= arm-none-eabi-gcc
+# if cc isn't set by the user, set it to ARM_CC
+ifeq ($(origin CC),default)
+CC = $(ARM_CC)
+endif
+SIZE = arm-none-eabi-size
+RM = rm -rf
+
 # .gdb-startup assumes the elf is here
 BUILDDIR = build
 TARGET = $(BUILDDIR)/main.elf
@@ -39,32 +47,73 @@ LDSCRIPT = devices/samd11d14am_flash.ld
 ARCHFLAGS += -mcpu=cortex-m0plus
 endif
 
-CFLAGS += $(ARCHFLAGS)
+ARCHFLAGS += -mlittle-endian -mthumb
 
-CFLAGS += -ffunction-sections -fdata-sections
+# this should be before libraries it depends on, eg libgcc and libnosys
+# manually specify libgcc_nano, only gcc has the magic .specs aliasing logic
+LDFLAGS += -lc_nano
+
+# clang support
+CC_VERSION_INFO := $(shell $(CC) --version)
+
+ifneq '' '$(findstring clang,$(CC_VERSION_INFO))'
+USING_CLANG = yes
+
+ARM_CORTEXM_SYSROOT := \
+  $(shell $(ARM_CC) $(ARCHFLAGS) -print-sysroot 2>&1)
+
+# The directory where Newlib's libc.a & libm.a reside
+# for the specific target architecture
+ARM_CORTEXM_MULTI_DIR := \
+  $(shell $(ARM_CC) $(ARCHFLAGS) -print-multi-directory 2>&1)
+
+CFLAGS += \
+  --sysroot=$(ARM_CORTEXM_SYSROOT) \
+  --target=arm-none-eabi
+
+LDFLAGS += \
+  -L$(ARM_CORTEXM_SYSROOT)/lib/$(ARM_CORTEXM_MULTI_DIR)
+endif
+
+CFLAGS += $(ARCHFLAGS)
 
 CFLAGS += -ggdb3
 
 CFLAGS += -Wall -Werror
 
-CFLAGS += -mlittle-endian -mthumb -mthumb-interwork
+CFLAGS += -fdebug-prefix-map=$(abspath .)=.
+LDFLAGS += -nostdlib
 
-LDFLAGS += -T$(LDSCRIPT)
+# Set this c define to 1 if ENABLE_SEMIHOSTING=1 or 0 otherwise
+CFLAGS += -DENABLE_SEMIHOSTING=$(or $(findstring 1,$(ENABLE_SEMIHOSTING)),0)
 
 ifeq (1,$(ENABLE_SEMIHOSTING))
-LDFLAGS += --specs=rdimon.specs -lc -lrdimon
-CFLAGS += -DENABLE_SEMIHOSTING=1
+# add rdimon specs, and include stdlib when linking
+ifeq ($(USING_CLANG),)
+LDFLAGS += \
+  --specs=rdimon.specs
+endif
+LDFLAGS += -lrdimon_nano
 else
-LDFLAGS += --specs=nano.specs
-CFLAGS += -DENABLE_SEMIHOSTING=0
+# omit stdlib, but add libnosys and libgcc manually instead of providing a local
+# port, so stdlib functions are available. this makes it easy to use clang too.
+ifeq ($(USING_CLANG),)
+LDFLAGS += \
+  --specs=nano.specs --specs=nosys.specs
+endif
 endif
 
-LDFLAGS += -Wl,--gc-sections,-Map,$(TARGET).map,--print-memory-usage
+LDFLAGS += \
+  -lg_nano -lnosys \
+  $(shell $(ARM_CC) $(ARCHFLAGS) -print-libgcc-file-name 2>&1)
 
-CC = arm-none-eabi-gcc
-LD = arm-none-eabi-gcc
-SIZE = arm-none-eabi-size
-RM = rm -rf
+# LDFLAGS += -Wl,-T$(LDSCRIPT)
+LDFLAGS += -Wl,--gc-sections,-Map,$(TARGET).map
+
+# print memory usage if linking with gnu ld
+ifeq ($(USING_CLANG),)
+LDFLAGS += -Wl,--print-memory-usage
+endif
 
 SRCS = \
     main.c \
@@ -86,8 +135,8 @@ clean:
 $(BUILDDIR)/%.o: %.c | $(BUILDDIR)
 	$(CC) $(CFLAGS) -c $^ -o $@
 
-$(TARGET): $(OBJS) $(LDSCRIPT)
-	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
+$(TARGET): $(LDSCRIPT) $(OBJS)
+	$(CC) $(CFLAGS) -T$^ $(LDFLAGS) -o $@
 	$(SIZE) $(TARGET)
 
 flash: $(TARGET)
