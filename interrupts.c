@@ -60,9 +60,7 @@ static void HardFaultHandler(void) { DefaultHandler(); }
 // needed.
 __attribute__((section(".isr_vector"))) void (*const g_pfnVectors[])(void) = {
     (void *)(&_estack), // initial stack pointer
-    ResetHandler,
-    NMIHandler,
-    HardFaultHandler,
+    ResetHandler, NMIHandler, HardFaultHandler,
     // MemManageHandler,
     // BusFaultHandler,
     // UsageFaultHandler,
