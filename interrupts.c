@@ -29,7 +29,7 @@ __attribute__((noinline)) static void prv_cinit(void) {
   }
 
   // Zero fill the bss segment.
-  for (uint32_t *dst = &_sbss; dst < &_ebss;) {
+  for (uint32_t *dst = &_sbss; (uintptr_t)dst < (uintptr_t)&_ebss;) {
     *(dst++) = 0;
   }
 }
