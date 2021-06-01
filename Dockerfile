@@ -6,7 +6,7 @@ RUN apt-get update && apt-get -y install \
     build-essential \
     cppcheck \
     clang-11 \
-    clang-format-11 \
+    clang-format \
     clang-tidy-11 \
     git \
     lld-11 \
