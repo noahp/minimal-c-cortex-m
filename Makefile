@@ -1,3 +1,4 @@
+.SILENT:
 
 ARM_CC ?= arm-none-eabi-gcc
 # if cc isn't set by the user, set it to ARM_CC
@@ -13,8 +14,14 @@ TARGET = $(BUILDDIR)/main.elf
 
 BOARD ?= stm32f4discovery
 
-ENABLE_STDIO ?= 1
-ENABLE_SEMIHOSTING ?= 1
+# set C preprocessor tokens of 0 or 1 for each flag
+FLAGS = \
+  ENABLE_STDIO \
+  ENABLE_SEMIHOSTING \
+  ENABLE_RTT \
+
+CFLAGS += $(foreach flag,$(FLAGS),-D$(flag)=$(or $(findstring 1,$($(flag))),0))
+
 
 # TODO cleaner board mux
 
@@ -80,15 +87,12 @@ endif
 
 CFLAGS += $(ARCHFLAGS)
 
-CFLAGS += -ggdb3 -std=c11
+CFLAGS += -Os -ggdb3 -std=c11
 
 CFLAGS += -Wall -Werror
 
 CFLAGS += -fdebug-prefix-map=$(abspath .)=.
 LDFLAGS += -nostdlib
-
-# Set this c define to 1 if ENABLE_STDIO=1 or 0 otherwise
-CFLAGS += -DENABLE_STDIO=$(or $(findstring 1,$(ENABLE_STDIO)),0)
 
 ifeq (1,$(ENABLE_SEMIHOSTING))
 # add rdimon specs, and include stdlib when linking
@@ -122,6 +126,20 @@ SRCS = \
     main.c \
     interrupts.c \
 
+ifneq (,$(ENABLE_RTT))
+# disable asm for simplicity
+CFLAGS += \
+  -DRTT_USE_ASM=0 \
+  -DSEGGER_RTT_SECTION=\".segger_rtt_section\" \
+  -I third-party/segger-rtt/RTT
+
+SRCS += \
+  third-party/segger-rtt/RTT/SEGGER_RTT_printf.c \
+  third-party/segger-rtt/RTT/SEGGER_RTT.c \
+  third-party/segger-rtt/Syscalls/SEGGER_RTT_Syscalls_GCC.c \
+
+endif
+
 OBJS = $(patsubst %.c, %.o, $(SRCS))
 OBJS := $(addprefix $(BUILDDIR)/,$(OBJS))
 
@@ -135,10 +153,13 @@ $(BUILDDIR):
 clean:
 	$(RM) $(BUILDDIR)
 
-$(BUILDDIR)/%.o: %.c | $(BUILDDIR)
+$(BUILDDIR)/%.o: %.c
+	mkdir -p $(dir $@)
+	$(info Compiling $^)
 	$(CC) $(CFLAGS) -c $^ -o $@
 
 $(TARGET): $(LDSCRIPT) $(OBJS)
+	$(info Linking $@)
 	$(CC) $(CFLAGS) -T$^ $(LDFLAGS) -o $@
 	$(SIZE) $(TARGET)
 

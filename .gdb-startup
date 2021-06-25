@@ -3,14 +3,25 @@
 target extended-remote :3333
 
 define openocd-reload
-    load build/main.elf
     # reset, program, reset via openocd
     monitor reset halt
-    monitor program build/main.elf
+    load
     monitor reset init
+
+    # rtt
+    monitor rtt setup 0x20000000 2048 "SEGGER RTT"
+    monitor rtt server stop 9090
+    monitor rtt server start 9090 0
 end
 document openocd-reload
 Reload elf and reflash
+end
+
+define rtt-start
+    monitor rtt start
+end
+document rtt-start
+Shortcut for 'monitor rtt start'
 end
 
 define jlink-reload

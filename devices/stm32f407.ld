@@ -127,6 +127,7 @@ SECTIONS
 	{
 		__data_start__ = .;
 		*(vtable)
+		KEEP(*(.segger_rtt_section))
 		*(.data*)
 
 		. = ALIGN(4);

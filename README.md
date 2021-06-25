@@ -16,6 +16,14 @@ A minimal Arm Cortex-M example, including semihosting, for my own reference.
 # 'continue' in gdb, you should see 'Hello there!' in openocd
 ```
 
+For RTT, run this in another terminal:
+
+```bash
+# keep retrying until connection is made. also reopen on aborted connection
+# on normal exit (eg ctrl+] then ctrl+d), will terminate the loop
+❯ until telnet localhost 9090; do sleep 0.5; done
+```
+
 ## stm32f407 discovery
 
 For pyocd (TODO why does this not really erase/write flash successfully?)
