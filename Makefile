@@ -31,6 +31,8 @@ endif
 ifeq (stm32f4discovery,$(BOARD))
 LDSCRIPT = devices/stm32f407.ld
 ARCHFLAGS += -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16
+# FLASH_CMD = pyocd gdbserver
+# GDB_RELOAD_CMD = pyocd-reload
 FLASH_CMD = openocd -f devices/stm32f4.openocd.cfg
 GDB_RELOAD_CMD = openocd-reload
 endif

@@ -24,3 +24,13 @@ end
 document jlink-reload
 Reload elf and reflash
 end
+
+define pyocd-reload
+    # program + reset via pyocd
+    monitor reset halt
+    load build/main.elf
+    monitor reset halt
+end
+document pyocd-reload
+Reload elf and reflash
+end
