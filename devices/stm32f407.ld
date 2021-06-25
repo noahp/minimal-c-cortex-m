@@ -1,116 +1,194 @@
-ENTRY(ResetHandler)
-
-OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
-SEARCH_DIR(.)
-
-/* STM32F407 memory regions as follows:
-
-0x2001 C000 - 0x2001 FFFF SRAM2 (16 KB)
-0x2000 0000 - 0x2001 BFFF SRAM1 (112 KB)
-0x1FFF 0000 - 0x1FFF 77FF System memory System memory System memory System memory
-0x0810 0000 - 0x0FFF FFFF Reserved Reserved Reserved Reserved
-0x0800 0000 - 0x080F FFFF Flash memory Flash memory Flash memory Flash memory
-*/
-
-/* cortex-m4 supports up to 240 external interrupts plus 16 built in; see:
- * https://developer.arm.com/ip-products/processors/cortex-m
- * this could be sized down if there's fewer ISR's used by the app */
-interrupt_region_size = (16 + 240) * 4;
-flash_origin = 0x08000000;
-
+/* Linker script to configure memory regions.
+ * Need modifying for a specific board.
+ *   FLASH.ORIGIN: starting address of flash
+ *   FLASH.LENGTH: length of flash
+ *   RAM.ORIGIN: starting address of RAM bank 0
+ *   RAM.LENGTH: length of RAM bank 0
+ */
 MEMORY
 {
-  /* Note that we'd normally use ORIGIN(INTERRUPTS) and LENGTH(INTERRUPTS),
-    but this bug prevents it on some compiler releases (ex 8-2019-q3-update):
-    https://sourceware.org/bugzilla/show_bug.cgi?id=24289
-
-    So use a variable instead */
-
-  INTERRUPTS (rx) : ORIGIN = 0x08000000 /*flash_origin*/, LENGTH = (16 + 240) * 4 /*interrupt_region_size*/
-  FLASH (rx)      :
-      ORIGIN = ORIGIN(INTERRUPTS) + LENGTH(INTERRUPTS),
-      LENGTH = 1024K - LENGTH(INTERRUPTS)
-  RAM (xrw)       : ORIGIN = 0x20000000, LENGTH = 112K
+  FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 0x20000 /* 128K */
+  RAM (rwx) : ORIGIN = 0x20000000, LENGTH = 112K
 }
 
-STACK_SIZE = 0x100;
+/* Linker script to place sections and symbol values. Should be used together
+ * with other linker script that defines memory regions FLASH and RAM.
+ * It references following symbols, which must be defined in code:
+ *   Reset_Handler : Entry of reset handler
+ *
+ * It defines following symbols, which code can use without definition:
+ *   __exidx_start
+ *   __exidx_end
+ *   __copy_table_start__
+ *   __copy_table_end__
+ *   __zero_table_start__
+ *   __zero_table_end__
+ *   __etext
+ *   __data_start__
+ *   __preinit_array_start
+ *   __preinit_array_end
+ *   __init_array_start
+ *   __init_array_end
+ *   __fini_array_start
+ *   __fini_array_end
+ *   __data_end__
+ *   __bss_start__
+ *   __bss_end__
+ *   __end__
+ *   end
+ *   __HeapLimit
+ *   __StackLimit
+ *   __StackTop
+ *   __stack
+ */
+ENTRY(Reset_Handler)
 
-_estack = ORIGIN(RAM) + LENGTH(RAM);
-
-/* Section Definitions */
 SECTIONS
 {
-    .interrupts :
-    {
-        . = ALIGN(4);
-        KEEP(*(.isr_vector .isr_vector.*))
-        . = ALIGN(4);
-    } > INTERRUPTS
+	.text :
+	{
+		KEEP(*(.isr_vector))
+		*(.text*)
 
-    .text :
-    {
-        *(.text .text.* .gnu.linkonce.t.*)
-        *(.glue_7t) *(.glue_7)
-        *(.rodata .rodata* .gnu.linkonce.r.*)
-    } > FLASH
+		KEEP(*(.init))
+		KEEP(*(.fini))
 
-    .ARM.extab :
-    {
-        *(.ARM.extab* .gnu.linkonce.armextab.*)
-    } > FLASH
+		/* .ctors */
+		*crtbegin.o(.ctors)
+		*crtbegin?.o(.ctors)
+		*(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors)
+		*(SORT(.ctors.*))
+		*(.ctors)
 
-    .ARM.exidx :
-    {
-        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-    } > FLASH
+		/* .dtors */
+ 		*crtbegin.o(.dtors)
+ 		*crtbegin?.o(.dtors)
+ 		*(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
+ 		*(SORT(.dtors.*))
+ 		*(.dtors)
 
-    . = ALIGN(4);
-    _etext = .;
-    _sidata = .;
+		*(.rodata*)
 
-    .data : AT (_etext)
-    {
-        . = ALIGN(4);
-        _sdata = .;
-        *(.data .data.*)
-        . = ALIGN(4);
-        _edata = . ;
-    } > RAM
+		KEEP(*(.eh_frame*))
+	} > FLASH
 
-    /* .bss section which is used for uninitialized data */
-    .bss (NOLOAD) :
-    {
-        _sbss = . ;
-        __bss_start__ = _sbss;
-        *(.bss .bss.*)
-        *(COMMON)
-        . = ALIGN(4);
-        _ebss = . ;
-        __bss_end__ = _ebss;
-    } > RAM
+	.ARM.extab :
+	{
+		*(.ARM.extab* .gnu.linkonce.armextab.*)
+	} > FLASH
 
-    .heap (NOLOAD):
-    {
-        . = ALIGN(4);
-        PROVIDE ( end = . );
-        PROVIDE ( _end = . );
-        PROVIDE ( __end__ = . );
+	__exidx_start = .;
+	.ARM.exidx :
+	{
+		*(.ARM.exidx* .gnu.linkonce.armexidx.*)
+	} > FLASH
+	__exidx_end = .;
 
-        *(.heap*)
-        __HeapLimit = .;
-        . = ALIGN(4);
-    } > RAM
+	/* To copy multiple ROM to RAM sections,
+	 * uncomment .copy.table section and,
+	 * define __STARTUP_COPY_MULTIPLE in startup_ARMCMx.S */
+	/*
+	.copy.table :
+	{
+		. = ALIGN(4);
+		__copy_table_start__ = .;
+		LONG (__etext)
+		LONG (__data_start__)
+		LONG (__data_end__ - __data_start__)
+		LONG (__etext2)
+		LONG (__data2_start__)
+		LONG (__data2_end__ - __data2_start__)
+		__copy_table_end__ = .;
+	} > FLASH
+	*/
 
-    /* stack section */
-    .stack (NOLOAD):
-    {
-        . = ALIGN(8);
-        _sstack = .;
-        . = . + STACK_SIZE;
-        . = ALIGN(8);
-        _estack = .;
-    } > RAM
+	/* To clear multiple BSS sections,
+	 * uncomment .zero.table section and,
+	 * define __STARTUP_CLEAR_BSS_MULTIPLE in startup_ARMCMx.S */
+	/*
+	.zero.table :
+	{
+		. = ALIGN(4);
+		__zero_table_start__ = .;
+		LONG (__bss_start__)
+		LONG (__bss_end__ - __bss_start__)
+		LONG (__bss2_start__)
+		LONG (__bss2_end__ - __bss2_start__)
+		__zero_table_end__ = .;
+	} > FLASH
+	*/
 
-    . = ALIGN(4);
-    _end = . ;
+	/* Location counter can end up 2byte aligned with narrow Thumb code but
+	   __etext is assumed by startup code to be the LMA of a section in RAM
+	   which must be 4byte aligned */
+	__etext = ALIGN (4);
+
+	.data : AT (__etext)
+	{
+		__data_start__ = .;
+		*(vtable)
+		*(.data*)
+
+		. = ALIGN(4);
+		/* preinit data */
+		PROVIDE_HIDDEN (__preinit_array_start = .);
+		KEEP(*(.preinit_array))
+		PROVIDE_HIDDEN (__preinit_array_end = .);
+
+		. = ALIGN(4);
+		/* init data */
+		PROVIDE_HIDDEN (__init_array_start = .);
+		KEEP(*(SORT(.init_array.*)))
+		KEEP(*(.init_array))
+		PROVIDE_HIDDEN (__init_array_end = .);
+
+
+		. = ALIGN(4);
+		/* finit data */
+		PROVIDE_HIDDEN (__fini_array_start = .);
+		KEEP(*(SORT(.fini_array.*)))
+		KEEP(*(.fini_array))
+		PROVIDE_HIDDEN (__fini_array_end = .);
+
+		KEEP(*(.jcr*))
+		. = ALIGN(4);
+		/* All data end */
+		__data_end__ = .;
+
+	} > RAM
+
+	.bss :
+	{
+		. = ALIGN(4);
+		__bss_start__ = .;
+		*(.bss*)
+		*(COMMON)
+		. = ALIGN(4);
+		__bss_end__ = .;
+	} > RAM
+
+	.heap (COPY):
+	{
+		__end__ = .;
+		PROVIDE(end = .);
+		*(.heap*)
+		__HeapLimit = .;
+	} > RAM
+
+	/* .stack_dummy section doesn't contains any symbols. It is only
+	 * used for linker to calculate size of stack sections, and assign
+	 * values to stack symbols later */
+	.stack_dummy (COPY):
+	{
+		*(.stack*)
+	} > RAM
+
+	/* Set stack top to end of RAM, and stack limit move down by
+	 * size of stack_dummy section */
+	__StackTop = ORIGIN(RAM) + LENGTH(RAM);
+	__StackLimit = __StackTop - SIZEOF(.stack_dummy);
+	PROVIDE(__stack = __StackTop);
+
+	/* Check if data + heap + stack exceeds RAM limit */
+	ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed with stack")
 }

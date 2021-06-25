@@ -11,8 +11,8 @@ int main(void) {
 #if ENABLE_SEMIHOSTING
   initialise_monitor_handles();
 
-  // don't buffer on stdout
-  setbuf(stdout, NULL);
+  // line buffering on stdout
+  setvbuf(stdout, NULL, _IOLBF, 0);
 
   printf("🦄 Hello there!\n");
 #endif
