@@ -23,13 +23,13 @@ docker run --rm -v "$(pwd)":/mnt/workspace -t "$DOCKER_IMAGE_NAME" bash -c '
     # commit checker
     pre-commit run --all-files
     # make commands
-    ENABLE_SEMIHOSTING=0 make &&
+    ENABLE_STDIO=0 make &&
     git clean -dxff &&
-    ENABLE_SEMIHOSTING=1 make &&
+    ENABLE_STDIO=1 make &&
     git clean -dxff &&
-    ENABLE_SEMIHOSTING=0 make CC=clang-11 &&
+    ENABLE_STDIO=0 make CC=clang-11 &&
     git clean -dxff &&
-    ENABLE_SEMIHOSTING=1 make CC=clang-11 &&
+    ENABLE_STDIO=1 make CC=clang-11 &&
     git clean -dxff &&
     # clang tidy
     CC=clang-11 compiledb make &&

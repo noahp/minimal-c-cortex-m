@@ -13,7 +13,7 @@ TARGET = $(BUILDDIR)/main.elf
 
 BOARD ?= stm32f4discovery
 
-ENABLE_SEMIHOSTING ?= 1
+ENABLE_STDIO ?= 1
 
 # TODO cleaner board mux
 
@@ -86,10 +86,10 @@ CFLAGS += -Wall -Werror
 CFLAGS += -fdebug-prefix-map=$(abspath .)=.
 LDFLAGS += -nostdlib
 
-# Set this c define to 1 if ENABLE_SEMIHOSTING=1 or 0 otherwise
-CFLAGS += -DENABLE_SEMIHOSTING=$(or $(findstring 1,$(ENABLE_SEMIHOSTING)),0)
+# Set this c define to 1 if ENABLE_STDIO=1 or 0 otherwise
+CFLAGS += -DENABLE_STDIO=$(or $(findstring 1,$(ENABLE_STDIO)),0)
 
-ifeq (1,$(ENABLE_SEMIHOSTING))
+ifeq (1,$(ENABLE_STDIO))
 # add rdimon specs, and include stdlib when linking
 ifeq ($(USING_CLANG),)
 LDFLAGS += \
