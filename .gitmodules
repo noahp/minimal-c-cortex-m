@@ -1,0 +1,3 @@
+[submodule "third-party/segger-rtt"]
+	path = third-party/segger-rtt
+	url = ../../adfernandes/segger-rtt
