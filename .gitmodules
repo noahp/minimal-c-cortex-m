@@ -1,3 +1,6 @@
 [submodule "third-party/segger-rtt"]
 	path = third-party/segger-rtt
 	url = ../../adfernandes/segger-rtt
+[submodule "third-party/memfault-firmware-sdk"]
+	path = third-party/memfault-firmware-sdk
+	url = ../../memfault/memfault-firmware-sdk
