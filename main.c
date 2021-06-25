@@ -8,9 +8,11 @@ int main(void) {
   // should be snprintf_s but newlib doesn't have it as of 3.3.0
   snprintf(yolo, sizeof(yolo) - 1, "boom %.3f", 123.4f); // NOLINT
 
-#if ENABLE_STDIO
+#if ENABLE_SEMIHOSTING
   initialise_monitor_handles();
+#endif
 
+#if ENABLE_STDIO
   // line buffering on stdout
   setvbuf(stdout, NULL, _IOLBF, 0);
 
