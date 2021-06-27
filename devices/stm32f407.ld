@@ -168,6 +168,11 @@ SECTIONS
 		__bss_end__ = .;
 	} > RAM
 
+	 /* Global data not cleared after reset.  */
+	.noinit (NOLOAD): {
+		KEEP(*(*.noinit*))
+	} >RAM
+
 	.heap (COPY):
 	{
 		__end__ = .;
