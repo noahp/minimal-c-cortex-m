@@ -4,3 +4,6 @@
 [submodule "third-party/memfault-firmware-sdk"]
 	path = third-party/memfault-firmware-sdk
 	url = ../../memfault/memfault-firmware-sdk
+[submodule "third-party/CMSIS_5"]
+	path = third-party/CMSIS_5
+	url = ../../ARM-software/CMSIS_5
