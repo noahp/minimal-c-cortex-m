@@ -11,6 +11,10 @@
 #include "memfault/ports/reboot_reason.h"
 
 #include <stdbool.h>
+#include <stdio.h>
+
+#include "third-party/stm32f407xx.h"
+
 
 void memfault_platform_get_device_info(sMemfaultDeviceInfo *info) {
   // !FIXME: Populate with platform device information
@@ -45,7 +49,7 @@ void memfault_platform_reboot(void) {
   // !FIXME: Perform any final system cleanup here
 
   // !FIXME: Reset System
-  // NVIC_SystemReset()
+  NVIC_SystemReset();
   while (1) { } // unreachable
 }
 
@@ -64,13 +68,21 @@ bool memfault_platform_time_get_current(sMemfaultCurrentTime *time) {
   return false;
 }
 
+extern uint32_t _data;
+extern uint32_t _ebss;
+extern uint32_t _stack;
+
+
 size_t memfault_platform_sanitize_address_range(void *start_addr, size_t desired_size) {
   static const struct {
     uint32_t start_addr;
     size_t length;
   } s_mcu_mem_regions[] = {
-    // !FIXME: Update with list of valid memory banks to collect in a coredump
-    {.start_addr = 0x00000000, .length = 0xFFFFFFFF},
+      // !FIXME: Update with list of valid memory banks to collect in a coredump
+      // {.start_addr = (uint32_t)&__data_start__,
+      //  .length = (uint32_t)&_stack - (uint32_t)&__data_start__},
+      // !FIXME: Update with list of valid memory banks to collect in a coredump
+      {.start_addr = 0x00000000, .length = 0xFFFFFFFF},
   };
 
   for (size_t i = 0; i < MEMFAULT_ARRAY_SIZE(s_mcu_mem_regions); i++) {
@@ -83,6 +95,29 @@ size_t memfault_platform_sanitize_address_range(void *start_addr, size_t desired
 
   return 0;
 }
+
+const sMfltCoredumpRegion *
+memfault_platform_coredump_get_regions(const sCoredumpCrashInfo *crash_info,
+                                       size_t *num_regions) {
+  static sMfltCoredumpRegion s_coredump_regions[2];
+  const size_t stack_size =
+      (uintptr_t)&_stack - (uintptr_t)crash_info->stack_address;
+
+  // all of stack
+  s_coredump_regions[0] = MEMFAULT_COREDUMP_MEMORY_REGION_INIT(
+      crash_info->stack_address, stack_size);
+
+  // all of data
+  s_coredump_regions[1] = MEMFAULT_COREDUMP_MEMORY_REGION_INIT(
+      &_data, (uint32_t)((uintptr_t)&_ebss - (uintptr_t)&_data));
+
+  *num_regions = MEMFAULT_ARRAY_SIZE(s_coredump_regions);
+  return &s_coredump_regions[0];
+}
+
+// static RAM storage where logs will be stored. Storage can be any size
+// you want but you will want it to be able to hold at least a couple logs.
+static uint8_t s_log_buf_storage[512];
 
 //! !FIXME: This function _must_ be called by your main() routine prior
 //! to starting an RTOS or baremetal loop.
@@ -110,3 +145,76 @@ int memfault_platform_boot(void) {
 
   return 0;
 }
+
+void memfault_platform_log(eMemfaultPlatformLogLevel level, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+
+  char log_buf[128];
+  vsnprintf(log_buf, sizeof(log_buf), fmt, args);
+
+  const char *lvl_str;
+  switch (level) {
+    case kMemfaultPlatformLogLevel_Debug:
+      lvl_str = "D";
+      break;
+
+    case kMemfaultPlatformLogLevel_Info:
+      lvl_str = "I";
+      break;
+
+    case kMemfaultPlatformLogLevel_Warning:
+      lvl_str = "W";
+      break;
+
+    case kMemfaultPlatformLogLevel_Error:
+      lvl_str = "E";
+      break;
+
+    default:
+      return;
+      break;
+  }
+
+  vsnprintf(log_buf, sizeof(log_buf), fmt, args);
+
+  printf("[%s] MFLT: %s\n", lvl_str, log_buf);
+}
+
+bool memfault_platform_metrics_timer_boot(uint32_t period_sec, MemfaultPlatformTimerCallback callback) {
+  (void)period_sec, (void)callback;
+  // Schedule a timer to invoke callback() repeatedly after period_sec
+  return true;
+}
+
+uint64_t memfault_platform_get_time_since_boot_ms(void) {
+  // Return time since boot in ms, this is used for relative timings.
+  return 0;
+}
+
+MEMFAULT_PUT_IN_SECTION(".noinit.mflt_reboot_tracking")
+static uint8_t s_reboot_tracking[MEMFAULT_REBOOT_TRACKING_REGION_SIZE];
+
+void memfault_platform_reboot_tracking_boot(void) {
+  sResetBootupInfo reset_info = { 0 };
+  memfault_reboot_reason_get(&reset_info);
+  memfault_reboot_tracking_boot(s_reboot_tracking, &reset_info);
+}
+
+void memfault_reboot_reason_get(sResetBootupInfo *info) {
+  const uint32_t reset_cause = 0; // TODO: Populate with MCU reset reason
+  eMemfaultRebootReason reset_reason = kMfltRebootReason_Unknown;
+
+  // TODO: Convert MCU specific reboot reason to memfault enum
+
+  *info = (sResetBootupInfo) {
+    .reset_reason_reg = reset_cause,
+    .reset_reason = reset_reason,
+  };
+}
+
+void user_transport_send_chunk_data(void *chunk_data,
+                                    size_t chunk_data_len) {
+  printf("%.*s\n", chunk_data_len, (char *)chunk_data);
+}
+

@@ -26,6 +26,7 @@ FLAGS = \
   ENABLE_STDIO \
   ENABLE_SEMIHOSTING \
   ENABLE_RTT \
+  ENABLE_MEMFAULT
 
 CFLAGS += $(foreach flag,$(FLAGS),-D$(flag)=$(or $(findstring 1,$($(flag))),0))
 
@@ -104,7 +105,11 @@ CFLAGS += $(ARCHFLAGS)
 
 CFLAGS += -Os -ggdb3 -std=c11
 
-CFLAGS += -Wall -Werror
+CFLAGS += \
+  -Werror \
+  -Wall \
+  -Wextra \
+  -Wundef
 
 CFLAGS += -fdebug-prefix-map=$(abspath .)=.
 
@@ -113,14 +118,16 @@ CFLAGS += -I.
 MEMFAULT_PORT_ROOT := src
 MEMFAULT_SDK_ROOT := third-party/memfault-firmware-sdk
 
-MEMFAULT_COMPONENTS := core util panics metrics
+MEMFAULT_COMPONENTS := core util panics metrics demo
 include $(MEMFAULT_SDK_ROOT)/makefiles/MemfaultWorker.mk
 
 SRCS += \
   $(MEMFAULT_COMPONENTS_SRCS) \
-  $(MEMFAULT_PORT_ROOT)/memfault_platform_port.c
+  $(MEMFAULT_PORT_ROOT)/memfault_platform_port.c \
+  $(MEMFAULT_SDK_ROOT)/ports/panics/src/memfault_platform_ram_backed_coredump.c \
 
 INCLUDES += \
+  third-party/CMSIS_5/CMSIS/Core/Include \
   $(MEMFAULT_COMPONENTS_INC_FOLDERS) \
   $(MEMFAULT_SDK_ROOT)/ports/include \
   $(MEMFAULT_PORT_ROOT)

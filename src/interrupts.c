@@ -4,6 +4,8 @@
 //! - reset handler (system init)
 #include <stdint.h>
 
+#include "third-party/stm32f407xx.h"
+
 extern int main(void);
 
 // Following symbols are defined by the linker.
@@ -54,16 +56,20 @@ __attribute__((noreturn)) void Reset_Handler(void) {
   };
 }
 
+#pragma GCC optimize("Og")
 // Default_Handler is used for unpopulated interrupts
 static void Default_Handler(void) {
-  __asm__("bkpt");
+  __asm__("bkpt 91");
   // Go into an infinite loop.
   while (1) {
   };
 }
 
 static void NMI_Handler(void) { Default_Handler(); }
-static void HardFault_Handler(void) { Default_Handler(); }
+static void HardFault_Handler(void) {
+  __asm__("bkpt 92");
+  NVIC_SystemReset();
+}
 
 // A minimal vector table for a Cortex M. Uncomment/add additional vectors if
 // needed.

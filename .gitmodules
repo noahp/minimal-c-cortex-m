@@ -7,3 +7,4 @@
 [submodule "third-party/CMSIS_5"]
 	path = third-party/CMSIS_5
 	url = ../../ARM-software/CMSIS_5
+	shallow = true
