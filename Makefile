@@ -3,8 +3,15 @@
 ARM_CC ?= arm-none-eabi-gcc
 # if cc isn't set by the user, set it to ARM_CC
 ifeq ($(origin CC),default)
-CC = $(ARM_CC)
+CC := $(ARM_CC)
 endif
+
+# use ccache if available
+CCACHE := $(shell command -v ccache 2> /dev/null)
+ifdef CCACHE
+CC := ccache $(CC)
+endif
+
 SIZE = arm-none-eabi-size
 RM = rm -rf
 
@@ -21,7 +28,6 @@ FLAGS = \
   ENABLE_RTT \
 
 CFLAGS += $(foreach flag,$(FLAGS),-D$(flag)=$(or $(findstring 1,$($(flag))),0))
-
 
 # TODO cleaner board mux
 
@@ -101,6 +107,26 @@ CFLAGS += -Os -ggdb3 -std=c11
 CFLAGS += -Wall -Werror
 
 CFLAGS += -fdebug-prefix-map=$(abspath .)=.
+
+CFLAGS += -I.
+
+MEMFAULT_PORT_ROOT := src
+MEMFAULT_SDK_ROOT := third-party/memfault-firmware-sdk
+
+MEMFAULT_COMPONENTS := core util panics metrics
+include $(MEMFAULT_SDK_ROOT)/makefiles/MemfaultWorker.mk
+
+SRCS += \
+  $(MEMFAULT_COMPONENTS_SRCS) \
+  $(MEMFAULT_PORT_ROOT)/memfault_platform_port.c
+
+INCLUDES += \
+  $(MEMFAULT_COMPONENTS_INC_FOLDERS) \
+  $(MEMFAULT_SDK_ROOT)/ports/include \
+  $(MEMFAULT_PORT_ROOT)
+
+CFLAGS += $(addprefix -I,$(INCLUDES))
+
 LDFLAGS += -nostdlib
 
 ifeq (1,$(ENABLE_SEMIHOSTING))
@@ -131,9 +157,9 @@ ifeq ($(USING_CLANG),)
 LDFLAGS += -Wl,--print-memory-usage
 endif
 
-SRCS = \
-    main.c \
-    interrupts.c \
+SRCS += \
+    src/main.c \
+    src/interrupts.c \
 
 ifneq (,$(ENABLE_RTT))
 # disable asm for simplicity
