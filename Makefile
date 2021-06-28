@@ -174,15 +174,15 @@ SRCS += \
 
 endif
 
+all: $(TARGET)
+
 OBJS = $(patsubst %.c, %.o, $(SRCS))
 OBJS := $(addprefix $(BUILDDIR)/,$(OBJS))
 
+# depfiles for tracking include changes
 DEPFILES = $(OBJS:%.o=%.o.d)
+DEPFLAGS = -MT $@ -MMD -MP -MF $@.d
 -include $(DEPFILES)
-
-DEPFLAGS = -MT $@ -MMD -MP -MF $<.o
-
-all: $(TARGET)
 
 $(BUILDDIR):
 	mkdir -p $@
@@ -206,7 +206,7 @@ $(BUILDDIR)/cflags: $(CFLAGS_STALE)
 $(BUILDDIR)/%.o: %.c $(BUILDDIR)/cflags
 	mkdir -p $(dir $@)
 	$(info Compiling $<)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
 
 $(TARGET): $(LDSCRIPT) $(OBJS)
 	$(info Linking $@)

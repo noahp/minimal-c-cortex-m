@@ -1,6 +1,7 @@
-*.o
 *.elf
 *.hex
 *.map
-/compile_commands.json
+*.o
+*.o.d
 /build/cflags
+/compile_commands.json
