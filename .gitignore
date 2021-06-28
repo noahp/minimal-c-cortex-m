@@ -3,3 +3,4 @@
 *.hex
 *.map
 /compile_commands.json
+/build/cflags
