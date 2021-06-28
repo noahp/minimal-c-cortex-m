@@ -26,7 +26,8 @@ FLAGS = \
   ENABLE_STDIO \
   ENABLE_SEMIHOSTING \
   ENABLE_RTT \
-  ENABLE_MEMFAULT
+  ENABLE_MEMFAULT \
+  ENABLE_MEMFAULT_DEMO
 
 CFLAGS += $(foreach flag,$(FLAGS),-D$(flag)=$(or $(findstring 1,$($(flag))),0))
 
@@ -105,11 +106,15 @@ CFLAGS += \
 CFLAGS += -fdebug-prefix-map=$(abspath .)=.
 
 CFLAGS += -I.
+CFLAGS += -ffunction-sections -fdata-sections
 
 MEMFAULT_PORT_ROOT := src
 MEMFAULT_SDK_ROOT := third-party/memfault-firmware-sdk
 
-MEMFAULT_COMPONENTS := core util panics metrics demo
+MEMFAULT_COMPONENTS := core util panics metrics
+ifeq ($(ENABLE_MEMFAULT_DEMO),1)
+MEMFAULT_COMPONENTS += demo
+endif
 include $(MEMFAULT_SDK_ROOT)/makefiles/MemfaultWorker.mk
 
 SRCS += \

@@ -16,20 +16,7 @@ int _read(int fd, const void *buf, size_t count) {
 
 extern void initialise_monitor_handles(void);
 
-#if ENABLE_MEMFAULT
-
-#endif
-
-// static void echo_string(void) {
-// #if ENABLE_STDIO && !ENABLE_MEMFAULT
-//   static uint8_t yolo[128];
-//   unsigned read_count = read(0, yolo, sizeof(yolo));
-//   if (read_count) {
-//     printf("🦄 Hello there: %.*s\n", read_count, yolo);
-//   }
-// #endif
-// }
-
+#if ENABLE_MEMFAULT && ENABLE_MEMFAULT_DEMO
 static int send_char(char c) {
   putchar(c);
   return 0;
@@ -38,6 +25,8 @@ static int send_char(char c) {
 static sMemfaultShellImpl memfault_shell_impl = {
     .send_char = send_char,
 };
+
+#endif
 
 int main(void) {
 #if ENABLE_SEMIHOSTING
@@ -55,19 +44,20 @@ int main(void) {
 #endif
 
 #if ENABLE_MEMFAULT
+#if ENABLE_MEMFAULT_DEMO
   memfault_demo_shell_boot(&memfault_shell_impl);
-
+#endif
   memfault_platform_boot();
 #endif
 
   while (1) {
+#if ENABLE_MEMFAULT_DEMO
     char c;
 
     if (read(0, &c, sizeof(c))) {
       memfault_demo_shell_receive_char(c);
     }
-    // // example echo function
-    // echo_string();
+#endif
   };
 
   return 0;
