@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#if ENABLE_MEMFAULT
 #include "memfault/components.h"
+#endif
 
 #if ENABLE_RTT
 #include "third-party/segger-rtt/RTT/SEGGER_RTT.h"

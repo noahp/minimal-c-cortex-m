@@ -1,3 +1,4 @@
+# disable echoing rule commands, run make with --trace to see them
 .SILENT:
 
 ARM_CC ?= arm-none-eabi-gcc
@@ -93,40 +94,27 @@ LDFLAGS += \
   -L$(ARM_CORTEXM_SYSROOT)/lib/$(ARM_CORTEXM_MULTI_DIR)
 endif
 
-CFLAGS += $(ARCHFLAGS)
-
-CFLAGS += -Os -ggdb3 -std=c11
+CFLAGS += \
+  $(ARCHFLAGS) \
+  -Os -ggdb3 -std=c11 \
+  -fdebug-prefix-map=$(abspath .)=. \
+  -I. \
+  -ffunction-sections -fdata-sections \
 
 CFLAGS += \
   -Werror \
   -Wall \
   -Wextra \
-  -Wundef
+  -Wundef \
 
-CFLAGS += -fdebug-prefix-map=$(abspath .)=.
+CFLAGS += $(CFLAGS_WARNINGS)
 
-CFLAGS += -I.
-CFLAGS += -ffunction-sections -fdata-sections
-
-MEMFAULT_PORT_ROOT := src
-MEMFAULT_SDK_ROOT := third-party/memfault-firmware-sdk
-
-MEMFAULT_COMPONENTS := core util panics metrics
-ifeq ($(ENABLE_MEMFAULT_DEMO),1)
-MEMFAULT_COMPONENTS += demo
+ifeq ($(ENABLE_MEMFAULT),1)
+include Makefile-memfault.mk
 endif
-include $(MEMFAULT_SDK_ROOT)/makefiles/MemfaultWorker.mk
-
-SRCS += \
-  $(MEMFAULT_COMPONENTS_SRCS) \
-  $(MEMFAULT_PORT_ROOT)/memfault_platform_port.c \
-  $(MEMFAULT_SDK_ROOT)/ports/panics/src/memfault_platform_ram_backed_coredump.c \
 
 INCLUDES += \
   third-party/CMSIS_5/CMSIS/Core/Include \
-  $(MEMFAULT_COMPONENTS_INC_FOLDERS) \
-  $(MEMFAULT_SDK_ROOT)/ports/include \
-  $(MEMFAULT_PORT_ROOT)
 
 CFLAGS += $(addprefix -I,$(INCLUDES))
 
@@ -152,7 +140,6 @@ LDFLAGS += \
   -lg_nano -lnosys \
   $(shell $(ARM_CC) $(ARCHFLAGS) -print-libgcc-file-name 2>&1)
 
-# LDFLAGS += -Wl,-T$(LDSCRIPT)
 LDFLAGS += -Wl,--gc-sections,-Map,$(TARGET).map
 
 # print memory usage if linking with gnu ld
@@ -181,7 +168,10 @@ endif
 OBJS = $(patsubst %.c, %.o, $(SRCS))
 OBJS := $(addprefix $(BUILDDIR)/,$(OBJS))
 
-# VPATH = ./
+DEPFILES = $(OBJS:%.o=%.o.d)
+-include $(DEPFILES)
+
+DEPFLAGS = -MT $@ -MMD -MP -MF $<.o
 
 all: $(TARGET)
 
@@ -191,10 +181,23 @@ $(BUILDDIR):
 clean:
 	$(RM) $(BUILDDIR)
 
-$(BUILDDIR)/%.o: %.c
+# If CFLAGS differ from last build, rebuild all files
+RAW_CFLAGS := $(CFLAGS) $(LDFLAGS)
+CFLAGS_STALE = \
+  $(shell \
+    if ! (echo "$(RAW_CFLAGS)" | diff -q $(BUILDDIR)/cflags - > /dev/null 2>&1); then \
+      echo CFLAGS_STALE; \
+    fi \
+   )
+.PHONY: CFLAGS_STALE
+$(BUILDDIR)/cflags: $(CFLAGS_STALE)
 	mkdir -p $(dir $@)
-	$(info Compiling $^)
-	$(CC) $(CFLAGS) -c $^ -o $@
+	echo "$(RAW_CFLAGS)" > $@
+
+$(BUILDDIR)/%.o: %.c $(BUILDDIR)/cflags
+	mkdir -p $(dir $@)
+	$(info Compiling $<)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(TARGET): $(LDSCRIPT) $(OBJS)
 	$(info Linking $@)
