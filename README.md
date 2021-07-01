@@ -26,7 +26,7 @@ For RTT, run this in another terminal:
 
 ## stm32f407 discovery
 
-For pyocd (TODO why does this not really erase/write flash successfully?)
+For pyocd:
 
 ```bash
 # install st-link stuff
@@ -38,7 +38,7 @@ For pyocd (TODO why does this not really erase/write flash successfully?)
 # plug in board and
 
 ❯ pyocd list
-  #   Probe                           Unique ID
-----------------------------------------------------------------
-  0   NUCLEO-L073RZ [stm32l073rztx]   blahblah
+  #   Probe                          Unique ID
+---------------------------------------------------------------
+  0   DISCO-F407VG [stm32f407vgtx]   blahblah
 ```

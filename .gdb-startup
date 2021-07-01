@@ -12,16 +12,13 @@ define openocd-reload
     monitor rtt setup 0x20000000 2048 "SEGGER RTT"
     monitor rtt server stop 9090
     monitor rtt server start 9090 0
+    # initialize the monitor structure now, so we can start rtt without waiting
+    # for the application to initialize it
+    call _DoInit()
+    monitor rtt start
 end
 document openocd-reload
 Reload elf and reflash
-end
-
-define rtt-start
-    monitor rtt start
-end
-document rtt-start
-Shortcut for 'monitor rtt start'
 end
 
 define jlink-reload
