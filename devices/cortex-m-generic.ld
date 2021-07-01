@@ -50,6 +50,12 @@ SECTIONS
 		. = ALIGN(4);
 	} >rom
 
+	.note.gnu.build-id :
+	{
+		__start_gnu_build_id_start = .;
+		KEEP(*(.note.gnu.build-id))
+	} >rom
+
 	/* C++ Static constructors/destructors, also used for __attribute__
 	 * ((constructor)) and the likes */
 	.preinit_array : {

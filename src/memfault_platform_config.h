@@ -12,8 +12,7 @@
 extern "C" {
 #endif
 
-// For example, decide if you want to use the Gnu Build ID.
-// #define MEMFAULT_USE_GNU_BUILD_ID 1
+#define MEMFAULT_USE_GNU_BUILD_ID 1
 
 #define MEMFAULT_ASSERT_HALT_IF_DEBUGGING_ENABLED 1
 

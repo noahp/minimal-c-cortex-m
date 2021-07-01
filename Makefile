@@ -149,7 +149,7 @@ LDFLAGS += \
   -lg_nano -lnosys \
   $(shell $(ARM_CC) $(ARCHFLAGS) -print-libgcc-file-name 2>&1)
 
-LDFLAGS += -Wl,--gc-sections,-Map,$(TARGET).map
+LDFLAGS += -Wl,--gc-sections,-Map,$(TARGET).map,--build-id
 
 # print memory usage if linking with gnu ld
 ifeq ($(USING_CLANG),)
