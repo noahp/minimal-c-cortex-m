@@ -142,6 +142,8 @@ LDFLAGS += \
 
 LDFLAGS += -Wl,--gc-sections,-Map,$(TARGET).map,--build-id
 
+LDFLAGS += -Wl,--wrap=malloc,--wrap=free
+
 # print memory usage if linking with gnu ld
 ifeq ($(USING_CLANG),)
 LDFLAGS += -Wl,--print-memory-usage
@@ -156,6 +158,7 @@ ifneq (,$(ENABLE_RTT))
 CFLAGS += \
   -DRTT_USE_ASM=0 \
   -DSEGGER_RTT_SECTION=\".segger_rtt_section\" \
+  -DSEGGER_RTT_MODE_DEFAULT=SEGGER_RTT_MODE_BLOCK_IF_FIFO_FULL \
   -I third-party/segger-rtt/RTT
 
 SRCS += \

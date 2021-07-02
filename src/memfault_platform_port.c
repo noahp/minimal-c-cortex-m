@@ -48,7 +48,7 @@ void memfault_platform_get_device_info(sMemfaultDeviceInfo *info) {
 void memfault_platform_reboot(void) {
   // !FIXME: Perform any final system cleanup here
 
-  // !FIXME: Reset System
+  __asm__("bkpt 99");
   NVIC_SystemReset();
   while (1) { } // unreachable
 }
@@ -70,15 +70,18 @@ bool memfault_platform_time_get_current(sMemfaultCurrentTime *time) {
 
 extern uint32_t __data_start__;
 extern uint32_t __bss_end__;
-
+extern uint32_t __StackTop;
 
 size_t memfault_platform_sanitize_address_range(void *start_addr, size_t desired_size) {
-  static const struct {
+  struct {
     uint32_t start_addr;
     size_t length;
   } s_mcu_mem_regions[] = {
+      // !FIXME: Update with list of valid memory banks to collect in a coredump
+      // {.start_addr = (uint32_t)&__data_start__,
+      //  .length = (uint32_t)&__StackTop - (uint32_t)&__data_start__},
     // !FIXME: Update with list of valid memory banks to collect in a coredump
-    {.start_addr = (uint32_t)&__data_start__, .length = 20000},
+    {.start_addr = 0x00000000, .length = 0xFFFFFFFF},
   };
 
   for (size_t i = 0; i < MEMFAULT_ARRAY_SIZE(s_mcu_mem_regions); i++) {
@@ -92,6 +95,30 @@ size_t memfault_platform_sanitize_address_range(void *start_addr, size_t desired
   return 0;
 }
 
+const sMfltCoredumpRegion *
+memfault_platform_coredump_get_regions(const sCoredumpCrashInfo *crash_info,
+                                       size_t *num_regions) {
+  static sMfltCoredumpRegion s_coredump_regions[2];
+  const size_t stack_size =
+      (uintptr_t)&__StackTop - (uintptr_t)crash_info->stack_address;
+
+  // all of stack
+  s_coredump_regions[0] = MEMFAULT_COREDUMP_MEMORY_REGION_INIT(
+      crash_info->stack_address, stack_size);
+
+  // all of data
+  s_coredump_regions[1] = MEMFAULT_COREDUMP_MEMORY_REGION_INIT(
+      &__data_start__,
+      (uint32_t)((uintptr_t)&__bss_end__ - (uintptr_t)&__data_start__));
+
+  *num_regions = MEMFAULT_ARRAY_SIZE(s_coredump_regions);
+  return &s_coredump_regions[0];
+}
+
+// static RAM storage where logs will be stored. Storage can be any size
+// you want but you will want it to be able to hold at least a couple logs.
+static uint8_t s_log_buf_storage[512];
+
 //! !FIXME: This function _must_ be called by your main() routine prior
 //! to starting an RTOS or baremetal loop.
 int memfault_platform_boot(void) {
@@ -101,6 +128,7 @@ int memfault_platform_boot(void) {
   memfault_build_info_dump();
   memfault_device_info_dump();
   memfault_platform_reboot_tracking_boot();
+  memfault_log_boot(s_log_buf_storage, sizeof(s_log_buf_storage));
 
   static uint8_t s_event_storage[1024];
   const sMemfaultEventStorageImpl *evt_storage =
@@ -188,6 +216,7 @@ void memfault_reboot_reason_get(sResetBootupInfo *info) {
 
 void user_transport_send_chunk_data(void *chunk_data,
                                     size_t chunk_data_len) {
-  printf("%.*s\n", chunk_data_len, (char *)chunk_data);
+  (void)chunk_data, (void)chunk_data_len;
+  // printf("%.*s\n", chunk_data_len, (char *)chunk_data);
 }
 
