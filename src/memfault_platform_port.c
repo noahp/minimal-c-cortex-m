@@ -48,7 +48,7 @@ void memfault_platform_get_device_info(sMemfaultDeviceInfo *info) {
 void memfault_platform_reboot(void) {
   // !FIXME: Perform any final system cleanup here
 
-  // !FIXME: Reset System
+  __asm__("bkpt 99");
   NVIC_SystemReset();
   while (1) { } // unreachable
 }
@@ -74,14 +74,13 @@ extern uint32_t _stack;
 
 
 size_t memfault_platform_sanitize_address_range(void *start_addr, size_t desired_size) {
-  static const struct {
+  struct {
     uint32_t start_addr;
     size_t length;
   } s_mcu_mem_regions[] = {
       // !FIXME: Update with list of valid memory banks to collect in a coredump
-      // {.start_addr = (uint32_t)&__data_start__,
-      //  .length = (uint32_t)&_stack - (uint32_t)&__data_start__},
-      // !FIXME: Update with list of valid memory banks to collect in a coredump
+      // {.start_addr = (uint32_t)&_data,
+      //  .length = (uint32_t)&_stack - (uint32_t)&_data},
       {.start_addr = 0x00000000, .length = 0xFFFFFFFF},
   };
 
@@ -128,6 +127,7 @@ int memfault_platform_boot(void) {
   memfault_build_info_dump();
   memfault_device_info_dump();
   memfault_platform_reboot_tracking_boot();
+  memfault_log_boot(s_log_buf_storage, sizeof(s_log_buf_storage));
 
   static uint8_t s_event_storage[1024];
   const sMemfaultEventStorageImpl *evt_storage =
@@ -215,6 +215,7 @@ void memfault_reboot_reason_get(sResetBootupInfo *info) {
 
 void user_transport_send_chunk_data(void *chunk_data,
                                     size_t chunk_data_len) {
-  printf("%.*s\n", chunk_data_len, (char *)chunk_data);
+  (void)chunk_data, (void)chunk_data_len;
+  // printf("%.*s\n", chunk_data_len, (char *)chunk_data);
 }
 

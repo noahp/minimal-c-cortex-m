@@ -6,6 +6,10 @@
 
 #include "third-party/stm32f407xx.h"
 
+#if ENABLE_MEMFAULT
+#include "memfault/components.h"
+#endif
+
 extern int main(void);
 
 // Following symbols are defined by the linker.
@@ -65,8 +69,8 @@ static void Default_Handler(void) {
   };
 }
 
-static void NMI_Handler(void) { Default_Handler(); }
-static void HardFault_Handler(void) {
+__attribute__((weak)) void NMI_Handler(void) { Default_Handler(); }
+__attribute__((weak)) void HardFault_Handler(void) {
   __asm__("bkpt 92");
   NVIC_SystemReset();
 }
