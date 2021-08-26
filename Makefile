@@ -142,7 +142,9 @@ LDFLAGS += \
 
 LDFLAGS += -Wl,--gc-sections,-Map,$(TARGET).map,--build-id
 
-LDFLAGS += -Wl,--wrap=malloc,--wrap=free
+ifeq ($(FAST_MEMCPY),1)
+SRCS += src/memcpy.c
+endif
 
 # print memory usage if linking with gnu ld
 ifeq ($(USING_CLANG),)

@@ -1,5 +1,9 @@
+#include <inttypes.h>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
+
+#include "third-party/cortexm-cycnt/cortexm-cycnt.h"
 
 #if ENABLE_MEMFAULT
 #include "memfault/components.h"
@@ -64,6 +68,25 @@ int main(void) {
   memfault_platform_boot();
 #endif
 
+  struct yolo {
+    char data[128];
+  };
+  volatile struct yolo yolo;
+  const struct yolo init_array = {
+      .data = {1,},
+  };
+  _Static_assert(sizeof(yolo) == sizeof(init_array), "whoops");
+  {
+    uint32_t start = prv_start_cycle_count();
+    memcpy((void *)&yolo, &init_array, sizeof(yolo));
+    printf(">>> memcpy cycnt = %" PRIu32 "\n", prv_finish_cycle_count(start));
+  }
+  {
+    uint32_t start = prv_start_cycle_count();
+    yolo = init_array;
+    printf(">>> struct memcpy cycnt = %" PRIu32 "\n",
+           prv_finish_cycle_count(start));
+  }
   while (1) {
 #if ENABLE_MEMFAULT_DEMO
     char c;

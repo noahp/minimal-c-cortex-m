@@ -8,3 +8,6 @@
 	path = third-party/CMSIS_5
 	url = ../../ARM-software/CMSIS_5
 	shallow = true
+[submodule "third-party/cortexm-cycnt"]
+	path = third-party/cortexm-cycnt
+	url = ../cortexm-cycnt
