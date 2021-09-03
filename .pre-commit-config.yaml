@@ -35,7 +35,6 @@ repos:
         name: cppcheck
         entry: cppcheck
         language: system
-        files: ".*\\.c$"
         args:
           [
             --enable=all,
@@ -45,3 +44,4 @@ repos:
             --suppress=toomanyconfigs,
             --error-exitcode=1,
           ]
+        files: \.(c|h|cpp)$
