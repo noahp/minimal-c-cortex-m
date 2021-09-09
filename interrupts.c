@@ -8,28 +8,28 @@ extern int main(void);
 
 // Following symbols are defined by the linker.
 // Start address for the initialization values of the .data section.
-extern uint32_t __etext;
+extern uint32_t _data_loadaddr;
 // Start address for the .data section
-extern uint32_t __data_start__;
+extern uint32_t _data;
 // End address for the .data section
-extern uint32_t __data_end__;
+extern uint32_t _edata;
 // Start address for the .bss section
-extern uint32_t __bss_start__;
+extern uint32_t _bss;
 // End address for the .bss section
-extern uint32_t __bss_end__;
+extern uint32_t _ebss;
 // End address for stack
-extern uint32_t __stack;
+extern uint32_t _stack;
 
 // Prevent inlining to avoid persisting any stack allocations
 __attribute__((noinline)) static void prv_cinit(void) {
   // Initialize data and bss
   // Copy the data segment initializers from flash to SRAM
-  for (uint32_t *dst = &__data_start__, *src = &__etext; dst < &__data_end__;) {
+  for (uint32_t *dst = &_data, *src = &_data_loadaddr; dst < &_edata;) {
     *(dst++) = *(src++);
   }
 
   // Zero fill the bss segment.
-  for (uint32_t *dst = &__bss_start__; (uintptr_t)dst < (uintptr_t)&__bss_end__;) {
+  for (uint32_t *dst = &_bss; (uintptr_t)dst < (uintptr_t)&_ebss;) {
     *(dst++) = 0;
   }
 }
@@ -58,8 +58,8 @@ static void HardFault_Handler(void) { Default_Handler(); }
 
 // A minimal vector table for a Cortex M. Uncomment/add additional vectors if
 // needed.
-__attribute__((section(".isr_vector"))) void (*const g_pfnVectors[])(void) = {
-    (void *)(&__stack), // initial stack pointer
+__attribute__((section(".vectors"))) void (*const vector_table[])(void) = {
+    (void *)(&_stack), // initial stack pointer
     Reset_Handler, NMI_Handler, HardFault_Handler,
     // MemManage_Handler,
     // BusFault_Handler,
