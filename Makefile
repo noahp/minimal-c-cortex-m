@@ -163,10 +163,10 @@ $(TARGET): $(LDSCRIPT) $(OBJS)
 	$(CC) $(CFLAGS) -T$^ $(LDFLAGS) -o $@
 	$(SIZE) $(TARGET)
 
-flash: $(TARGET)
+debug: $(TARGET)
 	$(FLASH_CMD)
 
 gdb: $(TARGET)
 	arm-none-eabi-gdb-py $(TARGET) -ex "source .gdb-startup" -ex $(GDB_RELOAD_CMD)
 
-.PHONY: all clean flash gdb
+.PHONY: all clean debug gdb
