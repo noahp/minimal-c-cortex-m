@@ -131,7 +131,7 @@ ifneq (,$(ENABLE_RTT))
 CFLAGS += \
   -DRTT_USE_ASM=0 \
   -DSEGGER_RTT_SECTION=\".segger_rtt_section\" \
-  -I third-party/segger-rtt/RTT
+  -I third-party/segger-rtt/RTT \
 
 SRCS += \
   third-party/segger-rtt/RTT/SEGGER_RTT_printf.c \

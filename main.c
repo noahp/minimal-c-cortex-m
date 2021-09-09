@@ -25,7 +25,6 @@ int main(void) {
   initialise_monitor_handles();
 #elif ENABLE_RTT
   SEGGER_RTT_Init();
-  __asm__("bkpt 12");
 #endif
 
 #if ENABLE_STDIO
