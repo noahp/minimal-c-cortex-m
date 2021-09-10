@@ -4,8 +4,6 @@
 //! - reset handler (system init)
 #include <stdint.h>
 
-#include "third-party/stm32f407xx.h"
-
 #if ENABLE_MEMFAULT
 #include "memfault/components.h"
 #endif

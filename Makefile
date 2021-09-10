@@ -21,6 +21,7 @@ BUILDDIR = build
 TARGET = $(BUILDDIR)/main.elf
 
 BOARD ?= stm32f4discovery
+CFLAGS += -DBOARD_$(BOARD)
 
 # set C preprocessor tokens of 0 or 1 for each flag
 FLAGS = \
@@ -47,7 +48,7 @@ endif
 
 ifeq (stm32f4discovery,$(BOARD))
 LDSCRIPT = devices/stm32f407.ld
-ARCHFLAGS += -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16
+ARCHFLAGS += -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -include third-party/stm32f407xx.h
 # FLASH_CMD = pyocd gdbserver
 # GDB_RELOAD_CMD = pyocd-reload
 FLASH_CMD = openocd -f devices/stm32f4.openocd.cfg
@@ -68,7 +69,7 @@ endif
 
 ifeq (nrf52480,$(BOARD))
 LDSCRIPT = devices/nrf52840.ld
-ARCHFLAGS += -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16
+ARCHFLAGS += -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -include third-party/nrf52840.h
 FLASH_CMD = \
     JLinkGDBServerCLExe -USB -device nRF52840_xxAA -endian little -if SWD \
     -speed auto -noir -LocalhostOnly -port 3333

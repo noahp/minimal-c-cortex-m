@@ -14,9 +14,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "third-party/stm32f407xx.h"
+static char device_serial[96 / 8 * 2 + sizeof("-noahp")] = {"minicortex"};
 
-static char device_serial[96 / 8 * 2 + sizeof("-noahp")] = {0};
+#ifdef BOARD_stm32f4discovery
+#include "third-party/stm32f407xx.h"
 
 static void prv_init_device_serial(void) {
   uint8_t uid[96 / 8] = {0};
@@ -29,6 +30,9 @@ static void prv_init_device_serial(void) {
 
   snprintf(device_serial, sizeof(device_serial), "%s-noahp", uid_str);
 }
+#else
+static void prv_init_device_serial(void) {}
+#endif
 
 void memfault_platform_get_device_info(sMemfaultDeviceInfo *info) {
   // IMPORTANT: All strings returned in info must be constant
@@ -85,7 +89,6 @@ extern uint32_t _data;
 extern uint32_t _ebss;
 extern uint32_t _stack;
 
-
 size_t memfault_platform_sanitize_address_range(void *start_addr,
                                                 size_t desired_size) {
   struct {
@@ -93,9 +96,9 @@ size_t memfault_platform_sanitize_address_range(void *start_addr,
     size_t length;
   } s_mcu_mem_regions[] = {
       // !FIXME: Update with list of valid memory banks to collect in a coredump
-      // {.start_addr = (uint32_t)&_data,
-      //  .length = (uint32_t)&_stack - (uint32_t)&_data},
-      {.start_addr = 0x00000000, .length = 0xFFFFFFFF},
+      {.start_addr = (uint32_t)&_data,
+       .length = (uint32_t)&_stack - (uint32_t)&_data},
+      // {.start_addr = 0x00000000, .length = 0xFFFFFFFF},
   };
 
   for (size_t i = 0; i < MEMFAULT_ARRAY_SIZE(s_mcu_mem_regions); i++) {
