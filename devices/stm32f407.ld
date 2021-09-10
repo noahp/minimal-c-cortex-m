@@ -4,4 +4,5 @@ MEMORY
   ram (rwx) : ORIGIN = 0x20000000, LENGTH = 112K
 }
 
-INCLUDE devices/cortex-m-generic.ld
+SEARCH_DIR(.)
+INCLUDE cortex-m-generic.ld

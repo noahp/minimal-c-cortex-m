@@ -57,6 +57,15 @@ LDSCRIPT = devices/samd11d14am_flash.ld
 ARCHFLAGS += -mcpu=cortex-m0plus
 endif
 
+ifeq (nrf52480,$(BOARD))
+LDSCRIPT = devices/nrf52840.ld
+ARCHFLAGS += -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16
+FLASH_CMD = \
+    JLinkGDBServerCLExe -USB -device nRF52840_xxAA -endian little -if SWD \
+    -speed auto -noir -LocalhostOnly -port 3333
+GDB_RELOAD_CMD = jlink-reload
+endif
+
 ARCHFLAGS += -mlittle-endian -mthumb
 
 # this should be before libraries it depends on, eg libgcc and libnosys
