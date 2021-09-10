@@ -1,3 +1,6 @@
 [submodule "third-party/segger-rtt"]
 	path = third-party/segger-rtt
 	url = ../../adfernandes/segger-rtt
+[submodule "third-party/lua"]
+	path = third-party/lua
+	url = ../../lua/lua.git

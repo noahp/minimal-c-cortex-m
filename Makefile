@@ -19,6 +19,7 @@ FLAGS = \
   ENABLE_STDIO \
   ENABLE_SEMIHOSTING \
   ENABLE_RTT \
+  ENABLE_LUA
 
 CFLAGS += $(foreach flag,$(FLAGS),-D$(flag)=$(or $(findstring 1,$($(flag))),0))
 
@@ -110,9 +111,10 @@ LDFLAGS += \
 endif
 endif
 
+LIBGCC := $(shell $(ARM_CC) $(ARCHFLAGS) -print-libgcc-file-name 2>&1)
+
 LDFLAGS += \
-  -lg_nano -lnosys \
-  $(shell $(ARM_CC) $(ARCHFLAGS) -print-libgcc-file-name 2>&1)
+  -lg_nano -lnosys $(LIBGCC)
 
 # LDFLAGS += -Wl,-T$(LDSCRIPT)
 LDFLAGS += -Wl,--gc-sections,-Map,$(TARGET).map
@@ -138,6 +140,17 @@ SRCS += \
   third-party/segger-rtt/RTT/SEGGER_RTT.c \
   third-party/segger-rtt/Syscalls/SEGGER_RTT_Syscalls_GCC.c \
 
+endif
+
+ifneq (,$(ENABLE_LUA))
+SRCS += \
+  third-party/lua/onelua.c
+
+CFLAGS += \
+  -DLUA_32BITS=1
+
+LDFLAGS += \
+  -lm $(LIBGCC)
 endif
 
 OBJS = $(patsubst %.c, %.o, $(SRCS))

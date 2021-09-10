@@ -4,7 +4,7 @@
 //! - reset handler (system init)
 #include <stdint.h>
 
-extern int main(void);
+extern int app_main(void);
 
 // Following symbols are defined by the linker.
 // Start address for the initialization values of the .data section.
@@ -37,8 +37,17 @@ __attribute__((noinline)) static void prv_cinit(void) {
 __attribute__((noreturn)) void Reset_Handler(void) {
   prv_cinit();
 
+  // __ARM_FP is defined by the compiler if -mfloat-abi=hard is set
+#if defined(__ARM_FP)
+  // enable floating-point access; some instructions emitted at -O3 will make
+  // use of the FP co-processor, eg vldr.64
+#define CPACR (*(volatile uint32_t *)0xE000ED88)
+  CPACR |= ((3UL << 10 * 2) | /* set CP10 Full Access */
+            (3UL << 11 * 2)); /* set CP11 Full Access */
+#endif
+
   // Call the application's entry point.
-  (void)main();
+  (void)app_main();
 
   // shouldn't return
   while (1) {

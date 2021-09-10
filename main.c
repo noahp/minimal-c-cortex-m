@@ -13,8 +13,8 @@ int _read(int fd, const void *buf, size_t count) {
 #endif
 
 extern void initialise_monitor_handles(void);
-
-int main(void) {
+extern int main(int argc, char **argv);
+int app_main(void) {
 
   // add an sprintf to force including a good portion of clib, including malloc
   // should be snprintf_s but newlib doesn't have it as of 3.3.0
@@ -35,7 +35,9 @@ int main(void) {
 #endif
 
   while (1) {
-#if ENABLE_STDIO
+#if ENABLE_LUA
+    main(0, NULL);
+#elif ENABLE_STDIO
     unsigned read_count = read(0, yolo, sizeof(yolo));
     if (read_count) {
       printf("🦄 Hello there: %.*s\n", read_count, yolo);
