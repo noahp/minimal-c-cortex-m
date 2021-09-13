@@ -5,4 +5,4 @@ MEMORY
 }
 
 SEARCH_DIR(.)
-INCLUDE cortex-m-generic.ld
+INCLUDE devices/cortex-m-generic.ld
