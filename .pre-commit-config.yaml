@@ -1,5 +1,17 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+
+# Skip these files in third-party
+exclude: "^\
+  (\
+    third-party/(\
+      (nrf52840\\.h)|\
+      (stm32f407xx\\.h)|\
+      (system_nrf52840\\.h)|\
+      (system_stm32f4xx\\.h))\
+  )\
+"
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.4.0
