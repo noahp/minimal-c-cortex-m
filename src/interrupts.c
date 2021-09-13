@@ -88,5 +88,6 @@ __attribute__((section(".vectors"))) void (*const vector_table[])(void) = {
     // SVCall_Handler,
     // DbgMon_Handler,
     // 0,
+    // PendSV_Handler,
     // SysTick_Handler,
 };
