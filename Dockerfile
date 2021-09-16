@@ -25,7 +25,7 @@ RUN wget -nv --show-progress --progress=bar:force:noscroll ${ARM_URL} -O /opt/gc
 ENV PATH=/opt/gcc-arm-none-eabi/bin:${PATH}
 
 ## Build CodeChecker
-ARG CC_VERSION=3ea0f3b20ef000e2841c04545b6d01809570dbed
+ARG CC_VERSION=v6.17.0
 RUN apt-get update && apt-get -y install \
     build-essential \
     curl \
@@ -38,9 +38,8 @@ RUN apt-get update && apt-get -y install \
 
 # Download CodeChecker release.
 # Build CodeChecker. hack installing wheel, it's busted without.
-RUN git clone --depth 1 https://github.com/Ericsson/CodeChecker.git /codechecker \
+RUN git clone --depth 1 https://github.com/Ericsson/CodeChecker.git -b ${CC_VERSION} /codechecker \
     && cd /codechecker \
-    && git checkout ${CC_VERSION} \
     && ACTIVATE_RUNTIME_VENV=". venv/bin/activate && pip install wheel==0.34.2" make venv \
     && . venv/bin/activate && BUILD_LOGGER_64_BIT_ONLY=YES make package
 
