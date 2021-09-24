@@ -14,6 +14,12 @@ int _read(int fd, const void *buf, size_t count) {
   // always non-blocking
   return SEGGER_RTT_Read(0, (uint8_t *)buf, count);
 }
+
+// Use a no-inlined wrapper so we can call this from .gdb-startup
+__attribute__((noinline)) void noinlined_SEGGER_RTT_Init(void) {
+  SEGGER_RTT_Init();
+}
+
 #endif
 
 extern void initialise_monitor_handles(void);
@@ -47,7 +53,7 @@ int main(void) {
 #if ENABLE_SEMIHOSTING
   initialise_monitor_handles();
 #elif ENABLE_RTT
-  SEGGER_RTT_Init();
+  noinlined_SEGGER_RTT_Init();
 #endif
 
 #if ENABLE_STDIO
