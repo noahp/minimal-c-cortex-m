@@ -106,7 +106,7 @@ endif
 
 CFLAGS += \
   $(ARCHFLAGS) \
-  -Os -ggdb3 -std=c11 \
+  -O3 -flto -ggdb3 -std=c11 -Wl,--require-defined=g_memfault_build_id \
   -fdebug-prefix-map=$(abspath .)=. \
   -I. \
   -ffunction-sections -fdata-sections \
