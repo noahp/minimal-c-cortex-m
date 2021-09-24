@@ -17,7 +17,7 @@ define openocd-reload
     monitor rtt server start 9090 0
     # initialize the monitor structure now, so we can start rtt without waiting
     # for the application to initialize it
-    call _DoInit()
+    call SEGGER_RTT_Init()
     monitor rtt start
 end
 document openocd-reload
