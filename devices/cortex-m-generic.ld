@@ -126,6 +126,12 @@ SECTIONS
 
 	. = ALIGN(4);
 	end = .;
+
+    log_fmt 0xF0000000 (INFO):
+    {
+       KEEP(*(*.log_fmt_hdr))
+       KEEP(*(log_fmt))
+    }
 }
 
 PROVIDE(_stack = ORIGIN(ram) + LENGTH(ram));
