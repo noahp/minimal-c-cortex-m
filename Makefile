@@ -13,6 +13,9 @@ ifdef CCACHE
 CC := ccache $(CC)
 endif
 
+# default to arm gdb
+GDB ?= arm-none-eabi-gdb-py
+
 SIZE = arm-none-eabi-size
 RM = rm -rf
 
@@ -220,6 +223,6 @@ debug: $(TARGET)
 	$(FLASH_CMD)
 
 gdb: $(TARGET)
-	arm-none-eabi-gdb-py $(TARGET) -ex "source .gdb-startup" -ex $(GDB_RELOAD_CMD)
+	$(GDB) $(TARGET) -ex "source .gdb-startup" -ex $(GDB_RELOAD_CMD)
 
 .PHONY: all clean debug gdb
