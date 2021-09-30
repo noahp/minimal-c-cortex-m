@@ -58,7 +58,9 @@ __attribute__((noreturn)) void Reset_Handler(void) {
   };
 }
 
+#if !defined(__clang__)
 #pragma GCC optimize("Og")
+#endif
 // Default_Handler is used for unpopulated interrupts
 static void Default_Handler(void) {
   __asm__("bkpt 91");
