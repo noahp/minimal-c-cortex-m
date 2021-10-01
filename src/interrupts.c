@@ -62,18 +62,20 @@ __attribute__((noreturn)) void Reset_Handler(void) {
 #pragma GCC optimize("Og")
 #endif
 // Default_Handler is used for unpopulated interrupts
-static void Default_Handler(void) {
+void Default_Handler(void) {
   __asm__("bkpt 91");
   // Go into an infinite loop.
   while (1) {
   };
 }
 
+#if ! ENABLE_MEMFAULT
 __attribute__((weak)) void NMI_Handler(void) { Default_Handler(); }
 __attribute__((weak)) void HardFault_Handler(void) {
   __asm__("bkpt 92");
   NVIC_SystemReset();
 }
+#endif
 
 // A minimal vector table for a Cortex M. Uncomment/add additional vectors if
 // needed.

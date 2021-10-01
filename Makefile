@@ -78,16 +78,6 @@ endif
 
 ARCHFLAGS += -mlittle-endian -mthumb
 
-# this should be before libraries it depends on, eg libgcc and libnosys
-# manually specify libgcc_nano, only gcc has the magic .specs aliasing logic
-LDFLAGS += -lc_nano
-
-# clang support
-CC_VERSION_INFO := $(shell $(CC) --version)
-
-ifneq '' '$(findstring clang,$(CC_VERSION_INFO))'
-USING_CLANG = yes
-
 ARM_CORTEXM_SYSROOT := \
   $(shell $(ARM_CC) $(ARCHFLAGS) -print-sysroot 2>&1)
 
@@ -96,12 +86,22 @@ ARM_CORTEXM_SYSROOT := \
 ARM_CORTEXM_MULTI_DIR := \
   $(shell $(ARM_CC) $(ARCHFLAGS) -print-multi-directory 2>&1)
 
+ARM_CORTEXM_LIB_DIR := $(ARM_CORTEXM_SYSROOT)/lib/$(ARM_CORTEXM_MULTI_DIR)
+
+# this should be before libraries it depends on, eg libgcc and libnosys
+# manually specify libgcc_nano, only gcc has the magic .specs aliasing logic
+LDFLAGS += $(ARM_CORTEXM_LIB_DIR)/libc_nano.a
+
+# clang support
+CC_VERSION_INFO := $(shell $(CC) --version)
+
+ifneq '' '$(findstring clang,$(CC_VERSION_INFO))'
+USING_CLANG = yes
+
+
 CFLAGS += \
   --sysroot=$(ARM_CORTEXM_SYSROOT) \
   --target=arm-none-eabi
-
-LDFLAGS += \
-  -L$(ARM_CORTEXM_SYSROOT)/lib/$(ARM_CORTEXM_MULTI_DIR)
 endif
 
 CFLAGS += \
@@ -147,7 +147,7 @@ endif
 endif
 
 LDFLAGS += \
-  -lg_nano -lnosys \
+  $(ARM_CORTEXM_LIB_DIR)/libnosys.a \
   $(shell $(ARM_CC) $(ARCHFLAGS) -print-libgcc-file-name 2>&1)
 
 LDFLAGS += -Wl,--gc-sections,-Map,$(TARGET).map,--build-id
@@ -213,6 +213,7 @@ $(BUILDDIR)/%.o: %.c $(BUILDDIR)/cflags
 
 $(TARGET): $(LDSCRIPT) $(OBJS)
 	$(info Linking $@)
+	echo $(CC) $(CFLAGS) -T$^ $(LDFLAGS) -o $@
 	$(CC) $(CFLAGS) -T$^ $(LDFLAGS) -o $@
 	$(SIZE) $(TARGET)
 
