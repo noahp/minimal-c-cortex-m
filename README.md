@@ -26,6 +26,18 @@ build):
 ❯ until telnet localhost 9090; do sleep 0.5; done
 ```
 
+## Build with clang
+
+You'll need to install clang, `sudo apt install clang-12` or similar, then:
+
+```bash
+# basic clang-based build
+❯ CC=clang-12 make
+
+# bells and whistles
+❯ ENABLE_STDIO=1 ENABLE_RTT=1 ENABLE_MEMFAULT=1 ENABLE_MEMFAULT_DEMO=1 CC=clang-12 make
+```
+
 ## QEMU for stm32f407 discovery
 
 You can run the application in QEMU, here's what I did:
