@@ -4,6 +4,8 @@
 //! - reset handler (system init)
 #include <stdint.h>
 
+#include "third-party/cmsis_fanout.h"
+
 #if ENABLE_MEMFAULT
 #include "memfault/components.h"
 #endif
