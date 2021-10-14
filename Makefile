@@ -20,8 +20,8 @@ RM = rm -rf
 BUILDDIR = build
 TARGET = $(BUILDDIR)/main.elf
 
-BOARD ?= stm32f4discovery
-CFLAGS += -DBOARD_$(BOARD)
+DEVICE ?= stm32f4discovery
+CFLAGS += -DBOARD_$(DEVICE)
 
 # set C preprocessor tokens of 0 or 1 for each flag
 FLAGS = \
@@ -33,53 +33,10 @@ FLAGS = \
 
 CFLAGS += $(foreach flag,$(FLAGS),-D$(flag)=$(or $(findstring 1,$($(flag))),0))
 
-# TODO cleaner board mux
+# Bring in any device-specific settings
+include devices/$(DEVICE)/device.mk
 
-ifeq (apollo3_sparkfun,$(BOARD))
-# Sparkfun Artemis Black board for Ambiq Apollo 3
-# https://www.sparkfun.com/products/retired/15411
-LDSCRIPT = devices/ambiq-apollo3.ld
-ARCHFLAGS += -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16
-FLASH_CMD = \
-    JLinkGDBServerCLExe -USB -device ama3b1kk-kcr -endian little -if SWD \
-    -speed auto -noir -LocalhostOnly -port 3333
-GDB_RELOAD_CMD = jlink-reload
-endif
-
-ifeq (stm32f4discovery,$(BOARD))
-LDSCRIPT = devices/stm32f407.ld
-ROM_ORIGIN = 0x08000000
-ROM_LENGTH = 128K
-RAM_ORIGIN = 0x20000000
-RAM_LENGTH = 112K
-
-ARCHFLAGS += -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -include third-party/stm32f407xx.h
-# FLASH_CMD = pyocd gdbserver
-# GDB_RELOAD_CMD = pyocd-reload
-FLASH_CMD = openocd -f devices/stm32f4.openocd.cfg
-GDB_RELOAD_CMD = openocd-reload
-endif
-
-ifeq (kl02,$(BOARD))
-LDSCRIPT = devices/kl02.ld
-ARCHFLAGS += -mcpu=cortex-m0plus
-FLASH_CMD = @ echo $(BOARD) flashing/debug not currently supported
-GDB_RELOAD_CMD = jlink-reload
-endif
-
-ifeq (samd11,$(BOARD))
-LDSCRIPT = devices/samd11d14am_flash.ld
-ARCHFLAGS += -mcpu=cortex-m0plus
-endif
-
-ifeq (nrf52480,$(BOARD))
-LDSCRIPT = devices/nrf52840.ld
-ARCHFLAGS += -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -include third-party/nrf52840.h
-FLASH_CMD = \
-    JLinkGDBServerCLExe -USB -device nRF52840_xxAA -endian little -if SWD \
-    -speed auto -noir -LocalhostOnly -port 3333
-GDB_RELOAD_CMD = jlink-reload
-endif
+LINKER_SCRIPT ?= $(BUILDDIR)/link.ld
 
 ARCHFLAGS += -mlittle-endian -mthumb
 
@@ -220,12 +177,13 @@ LD_TEMPATE_VARS := ROM_ORIGIN ROM_LENGTH RAM_ORIGIN RAM_LENGTH
 LD_TEMPLATE_CFLAGS = \
   $(foreach t_,$(LD_TEMPATE_VARS),-D$(t_)=$($(t_)))
 
+# Generate a linker script for non-custom devices
 $(BUILDDIR)/link.ld: devices/cortex-m-generic.ld.template
 	$(info Generating linker script $@)
 	mkdir -p $(dir $@)
 	gcc $(LD_TEMPLATE_CFLAGS) -E -P -C -x c -o $@ $<
 
-$(TARGET): $(BUILDDIR)/link.ld $(OBJS)
+$(TARGET): $(LINKER_SCRIPT) $(OBJS)
 	$(info Linking $@)
 	$(CC) $(CFLAGS) -T$^ $(LDFLAGS) -o $@
 	$(SIZE) $(TARGET)

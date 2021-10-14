@@ -23,6 +23,7 @@ SECTIONS
 {
     .interrupts :
     {
+        *(.vectors)	/* Vector table */
         KEEP(*(.isr_vector .isr_vector.*))
     } > INTERRUPTS
 
