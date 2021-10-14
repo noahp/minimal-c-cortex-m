@@ -48,6 +48,11 @@ endif
 
 ifeq (stm32f4discovery,$(BOARD))
 LDSCRIPT = devices/stm32f407.ld
+ROM_ORIGIN = 0x08000000
+ROM_LENGTH = 128K
+RAM_ORIGIN = 0x20000000
+RAM_LENGTH = 112K
+
 ARCHFLAGS += -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -include third-party/stm32f407xx.h
 # FLASH_CMD = pyocd gdbserver
 # GDB_RELOAD_CMD = pyocd-reload
@@ -211,7 +216,16 @@ $(BUILDDIR)/%.o: %.c $(BUILDDIR)/cflags
 	$(info Compiling $<)
 	$(CC) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
 
-$(TARGET): $(LDSCRIPT) $(OBJS)
+LD_TEMPATE_VARS := ROM_ORIGIN ROM_LENGTH RAM_ORIGIN RAM_LENGTH
+LD_TEMPLATE_CFLAGS = \
+  $(foreach t_,$(LD_TEMPATE_VARS),-D$(t_)=$($(t_)))
+
+$(BUILDDIR)/link.ld: devices/cortex-m-generic.ld.template
+	$(info Generating linker script $@)
+	mkdir -p $(dir $@)
+	gcc $(LD_TEMPLATE_CFLAGS) -E -P -C -x c -o $@ $<
+
+$(TARGET): $(BUILDDIR)/link.ld $(OBJS)
 	$(info Linking $@)
 	$(CC) $(CFLAGS) -T$^ $(LDFLAGS) -o $@
 	$(SIZE) $(TARGET)
