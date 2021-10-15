@@ -16,6 +16,8 @@ MEMORY
   RAM2       (rwx) : ORIGIN = 0x20000000,   LENGTH = 3K
 }
 
+ENTRY(Reset_Handler)
+
 STACK_SIZE = 0x100;
 
 /* Section Definitions */
@@ -49,27 +51,36 @@ SECTIONS
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
     } > FLASH
 
+    .note.gnu.build-id :
+    {
+        __start_gnu_build_id_start = .;
+        KEEP(*(.note.gnu.build-id))
+    } > FLASH
+
     . = ALIGN(4);
     _etext = .;
     _sidata = .;
 
     .data : AT (_etext)
     {
+        _data = .;
         _sdata = .;
         *(.data .data.*)
         . = ALIGN(4);
         _edata = . ;
-    } > RAM2
+    } > RAM
+    _data_loadaddr = LOADADDR(.data);
 
     /* .bss section which is used for uninitialized data */
     .bss (NOLOAD) :
     {
+        _bss = .;
         _sbss = . ;
         *(.bss .bss.*)
         *(COMMON)
         . = ALIGN(4);
         _ebss = . ;
-    } > RAM
+    } > RAM2
 
     .heap (NOLOAD):
     {

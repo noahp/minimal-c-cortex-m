@@ -19,10 +19,21 @@
 
 /*
  * This is a generic linker script template for Cortex-M targets based on one
- * from libopencm3. It's run through C preprocessor to substitue the correct
- * addresses + sizes for rom + ram.
-*/
- 
+ * from libopencm3.
+ */
+
+/* Memory Regions */
+
+/*
+ * Use linker args like '-Wl,--defsym=<memory_type>_ORIGIN=<address>' to specify
+ * these values
+ */
+
+ROM_ORIGIN = DEFINED(ROM_ORIGIN) ? ROM_ORIGIN : 0x00000000;
+ROM_LENGTH = DEFINED(ROM_LENGTH) ? ROM_LENGTH : 0x0;
+RAM_ORIGIN = DEFINED(RAM_ORIGIN) ? RAM_ORIGIN : 0x20000000;
+RAM_LENGTH = DEFINED(RAM_LENGTH) ? RAM_LENGTH : 0x0;
+
 MEMORY
 {
 	rom (rx) : ORIGIN = ROM_ORIGIN, LENGTH = ROM_LENGTH

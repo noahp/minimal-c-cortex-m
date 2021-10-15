@@ -1,15 +1,17 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 
-# Skip these files in third-party
+# Skip these files
 exclude: "^\
   (\
-    third-party/(\
-      (nrf52840\\.h)|\
-      (stm32f407xx\\.h)|\
-      (system_nrf52840\\.h)|\
-      (system_stm32f4xx\\.h))\
-  )\
+    devices/.*/(\
+      (.*apollo3\\.h)|\
+      (.*MKL02Z4\\.h)|\
+      (.*nrf52840\\.h)|\
+      (.*samd11.*\\.h)|\
+      (.*stm32f4.*xx\\.h))\
+  )|\
+  (third-party/STM32F40x\\.svd)\
 "
 
 repos:

@@ -36,7 +36,8 @@ CFLAGS += $(foreach flag,$(FLAGS),-D$(flag)=$(or $(findstring 1,$($(flag))),0))
 # Bring in any device-specific settings
 include devices/$(DEVICE)/device.mk
 
-LINKER_SCRIPT ?= $(BUILDDIR)/link.ld
+DEFAULT_LINKER_SCRIPT = devices/cortex-m-generic.ld
+LINKER_SCRIPT ?= $(DEFAULT_LINKER_SCRIPT)
 
 ARCHFLAGS += -mlittle-endian -mthumb
 
@@ -83,6 +84,9 @@ CFLAGS += $(CFLAGS_WARNINGS)
 
 ifeq ($(ENABLE_MEMFAULT),1)
 include Makefile-memfault.mk
+
+LDFLAGS += -Wl,--wrap=malloc,--wrap=free
+
 endif
 
 INCLUDES += \
@@ -113,8 +117,6 @@ LDFLAGS += \
   $(shell $(ARM_CC) $(ARCHFLAGS) -print-libgcc-file-name 2>&1)
 
 LDFLAGS += -Wl,--gc-sections,-Map,$(TARGET).map,--build-id
-
-LDFLAGS += -Wl,--wrap=malloc,--wrap=free
 
 # print memory usage if linking with gnu ld
 ifeq ($(USING_CLANG),)
@@ -173,11 +175,14 @@ $(BUILDDIR)/%.o: %.c $(BUILDDIR)/cflags
 	$(info Compiling $<)
 	$(CC) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
 
-LD_TEMPATE_VARS := ROM_ORIGIN ROM_LENGTH RAM_ORIGIN RAM_LENGTH
-LD_TEMPLATE_CFLAGS = \
-  $(foreach t_,$(LD_TEMPATE_VARS),-D$(t_)=$($(t_)))
+ifeq ($(LINKER_SCRIPT),$(DEFAULT_LINKER_SCRIPT))
+# Populate ROM + RAM region values as linker args from device.mk
+LD_TEMPLATE_VARS := ROM_ORIGIN ROM_LENGTH RAM_ORIGIN RAM_LENGTH
+LD_TEMPLATE_LDFLAGS = \
+  $(foreach t_,$(LD_TEMPLATE_VARS),-Wl,--defsym=$(t_)=$($(t_)))
+LDFLAGS += $(LD_TEMPLATE_LDFLAGS)
+endif
 
-# Generate a linker script for non-custom devices
 $(BUILDDIR)/link.ld: devices/cortex-m-generic.ld.template
 	$(info Generating linker script $@)
 	mkdir -p $(dir $@)
