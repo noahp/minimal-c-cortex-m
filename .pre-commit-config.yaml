@@ -26,22 +26,33 @@ repos:
       - id: end-of-file-fixer # Ensures that a file is either empty, or ends with one newline.
       - id: pretty-format-json # This hook sets a standard for formatting JSON files.
       - id: trailing-whitespace # This hook trims trailing whitespace.
-  - repo: https://github.com/psf/black
-    rev: 20.8b1
+
+  - repo: local
     hooks:
-      - id: black
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.7.0
-    hooks:
-      - id: isort
+      # keep this before clang-tidy, it generates compile_commands.json for it
+      - id: compiledb
+        name: compiledb
+        entry: compiledb
+        language: system
+        # TODO get this working with ENABLE_MEMFAULT=1, ENABLE_MEMFAULT_DEMO=1,
+        args: [--overwrite, make, CC=clang, ENABLE_STDIO=1, ENABLE_RTT=1, -n, -B]
+        always_run: true
+        require_serial: true
+        pass_filenames: false
+
   - repo: https://github.com/pocc/pre-commit-hooks
     rev: v1.1.1
     hooks:
       - id: clang-format
         args: [--style=file, -i]
+        files: src/.*\.c
+
       - id: clang-tidy
         args: [-checks=clang-diagnostic-return-type]
-        files: testy\.c
+
+        # TODO once "ENABLE_MEMFAULT=1, ENABLE_MEMFAULT_DEMO=1" fixed, add src back
+        files: src/(interrupts)|(main)\.c
+        # files: src/.*\.c
 
   - repo: local
     hooks:

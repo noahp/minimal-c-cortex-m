@@ -17,17 +17,20 @@
 static char device_serial[96 / 8 * 2 + sizeof("-noahp")] = {"minicortex"};
 
 #ifdef BOARD_stm32f4discovery
-#include "third-party/stm32f407xx.h"
 
 static void prv_init_device_serial(void) {
   uint8_t uid[96 / 8] = {0};
+  // newlib-nano doesn't have memcpy_s :( disable this clang-tidy warning
+  // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
   memcpy(&uid, (uint8_t *)UID_BASE, sizeof(uid));
 
   char uid_str[sizeof(uid) * 2 + 1];
   for (size_t i = 0; i < sizeof(uid); i++) {
+    // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
     snprintf(uid_str + 2 * i, 3, "%02x", uid[i]);
   }
 
+  // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
   snprintf(device_serial, sizeof(device_serial), "%s-noahp", uid_str);
 }
 #else
@@ -168,12 +171,6 @@ int memfault_platform_boot(void) {
 
 void memfault_platform_log(eMemfaultPlatformLogLevel level, const char *fmt,
                            ...) {
-  va_list args;
-  va_start(args, fmt);
-
-  char log_buf[128];
-  vsnprintf(log_buf, sizeof(log_buf), fmt, args);
-
   const char *lvl_str;
   switch (level) {
   case kMemfaultPlatformLogLevel_Debug:
@@ -197,6 +194,11 @@ void memfault_platform_log(eMemfaultPlatformLogLevel level, const char *fmt,
     break;
   }
 
+  va_list args;
+  va_start(args, fmt);
+
+  char log_buf[128];
+  // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling)
   vsnprintf(log_buf, sizeof(log_buf), fmt, args);
 
   printf("[%s] MFLT: %s\n", lvl_str, log_buf);

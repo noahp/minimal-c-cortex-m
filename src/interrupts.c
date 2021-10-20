@@ -58,6 +58,11 @@ __attribute__((noreturn)) void Reset_Handler(void) {
   };
 }
 
+// Memfault declares these as naked, and causes a compile error in clang.
+// they're unused when Memfault is compiled.
+#if ENABLE_MEMFAULT
+extern void NMI_Handler(void), HardFault_Handler(void);
+#else
 #if !defined(__clang__)
 #pragma GCC optimize("Og")
 #endif
@@ -74,6 +79,7 @@ __attribute__((weak)) void HardFault_Handler(void) {
   __asm__("bkpt 92");
   NVIC_SystemReset();
 }
+#endif
 
 // A minimal vector table for a Cortex M. Uncomment/add additional vectors if
 // needed.
