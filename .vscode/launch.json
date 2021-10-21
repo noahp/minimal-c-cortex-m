@@ -1,0 +1,41 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug",
+
+            "cwd": "${workspaceRoot}",
+            "executable": "./build/main.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "device": "STM32L431VC",
+            "runToMain": true,
+            "preLaunchTask": "Build (Memfault)",
+            "preRestartCommands": [
+                "-ex 'source .gdb-startup'",
+                "-ex openocd-reload",
+            ],
+            "configFiles": [
+                "${workspaceRoot}/devices/stm32f4discovery/stm32f4.openocd.cfg",
+            ],
+            "svdFile": "${workspaceRoot}/third-party/STM32F40x.svd",
+
+            // rtt doesn't work :/
+            "rttConfig": {
+                "enabled": true,
+                "address": "auto",
+                "clearSearch": false,    // OpenOCD users may have to un-comment this
+                "decoders": [
+                    {
+                        "port": 0,
+                        "type": "console"
+                    }
+                ]
+            }
+        }
+    ]
+}

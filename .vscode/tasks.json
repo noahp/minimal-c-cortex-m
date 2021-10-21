@@ -1,0 +1,28 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            /*
+             * This is the default cargo build task,
+             * but we need to provide a label for it,
+             * so we can invoke it from the debug launcher.
+             */
+            "label": "Build (Memfault)",
+            "type": "process",
+            "command": "make",
+            "args": [
+                "ENABLE_STDIO=1",
+                "ENABLE_RTT=1",
+                "ENABLE_MEMFAULT=1",
+                "ENABLE_MEMFAULT_DEMO=1",
+                "-j6"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+    ]
+}
