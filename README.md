@@ -1,7 +1,7 @@
 # minimal-c-cortex-m
 
 A minimal Arm Cortex-M example, including semihosting, for my own reference.
-*not really recommended for anything beyond toy usage*
+_not really recommended for anything beyond toy usage_
 
 ```bash
 # necessary tools
