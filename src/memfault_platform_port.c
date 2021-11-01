@@ -7,12 +7,12 @@
 //!
 //! TODO: Fill in FIXMEs below for your platform
 
-#include "memfault/components.h"
-#include "memfault/ports/reboot_reason.h"
-
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "memfault/components.h"
+#include "memfault/ports/reboot_reason.h"
 
 static char device_serial[96 / 8 * 2 + sizeof("-noahp")] = {"minicortex"};
 
@@ -71,7 +71,7 @@ void memfault_platform_reboot(void) {
   __asm__("bkpt 99");
   NVIC_SystemReset();
   while (1) {
-  } // unreachable
+  }  // unreachable
 }
 
 bool memfault_platform_time_get_current(sMemfaultCurrentTime *time) {
@@ -116,9 +116,8 @@ size_t memfault_platform_sanitize_address_range(void *start_addr,
   return 0;
 }
 
-const sMfltCoredumpRegion *
-memfault_platform_coredump_get_regions(const sCoredumpCrashInfo *crash_info,
-                                       size_t *num_regions) {
+const sMfltCoredumpRegion *memfault_platform_coredump_get_regions(
+    const sCoredumpCrashInfo *crash_info, size_t *num_regions) {
   static sMfltCoredumpRegion s_coredump_regions[2];
   const size_t stack_size =
       (uintptr_t)&_stack - (uintptr_t)crash_info->stack_address;
@@ -173,25 +172,25 @@ void memfault_platform_log(eMemfaultPlatformLogLevel level, const char *fmt,
                            ...) {
   const char *lvl_str;
   switch (level) {
-  case kMemfaultPlatformLogLevel_Debug:
-    lvl_str = "D";
-    break;
+    case kMemfaultPlatformLogLevel_Debug:
+      lvl_str = "D";
+      break;
 
-  case kMemfaultPlatformLogLevel_Info:
-    lvl_str = "I";
-    break;
+    case kMemfaultPlatformLogLevel_Info:
+      lvl_str = "I";
+      break;
 
-  case kMemfaultPlatformLogLevel_Warning:
-    lvl_str = "W";
-    break;
+    case kMemfaultPlatformLogLevel_Warning:
+      lvl_str = "W";
+      break;
 
-  case kMemfaultPlatformLogLevel_Error:
-    lvl_str = "E";
-    break;
+    case kMemfaultPlatformLogLevel_Error:
+      lvl_str = "E";
+      break;
 
-  default:
-    return;
-    break;
+    default:
+      return;
+      break;
   }
 
   va_list args;
@@ -228,7 +227,7 @@ void memfault_platform_reboot_tracking_boot(void) {
 }
 
 void memfault_reboot_reason_get(sResetBootupInfo *info) {
-  const uint32_t reset_cause = 0; // TODO: Populate with MCU reset reason
+  const uint32_t reset_cause = 0;  // TODO: Populate with MCU reset reason
   eMemfaultRebootReason reset_reason = kMfltRebootReason_Unknown;
 
   // TODO: Convert MCU specific reboot reason to memfault enum

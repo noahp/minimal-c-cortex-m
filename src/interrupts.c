@@ -84,7 +84,7 @@ __attribute__((weak)) void HardFault_Handler(void) {
 // A minimal vector table for a Cortex M. Uncomment/add additional vectors if
 // needed.
 __attribute__((section(".vectors"))) void (*const vector_table[])(void) = {
-    (void *)(&_stack), // initial stack pointer
+    (void *)(&_stack),  // initial stack pointer
     Reset_Handler, NMI_Handler, HardFault_Handler,
     // MemManage_Handler,
     // BusFault_Handler,
