@@ -75,14 +75,9 @@ struct Nocli nocli_ctx = {
 
 #include <string.h>
 
+#include "libopencm3/stm32/flash.h"
 #include "third-party/littlefs/lfs.h"
 #include "third-party/littlefs/lfs_util.h"
-
-// variables used by the filesystem
-lfs_t lfs;
-lfs_file_t file;
-
-#include "libopencm3/stm32/flash.h"
 
 static uint32_t prv_flash_address_for_littlefs(const struct lfs_config *c,
                                                lfs_block_t block,
@@ -121,6 +116,8 @@ static int prv_lfs_prog(const struct lfs_config *c, lfs_block_t block,
   return LFS_ERR_OK;
 }
 
+static uint32_t erase_count = 0;
+
 // May return LFS_ERR_CORRUPT if the block should be considered bad.
 static int prv_lfs_erase(const struct lfs_config *c, lfs_block_t block) {
   (void)c;
@@ -135,6 +132,8 @@ static int prv_lfs_erase(const struct lfs_config *c, lfs_block_t block) {
     flash_erase_sector(block, 1);  // 16-bit program size
     flash_lock();
   }
+
+  erase_count++;
 
   return LFS_ERR_OK;
 }
@@ -168,6 +167,8 @@ static void prv_lfs_init(void) {
   // flash_set_ws(0);
 
   // mount the filesystem
+  lfs_t lfs;
+
   int err = lfs_mount(&lfs, &cfg);
 
   // reformat if we can't mount the filesystem
@@ -177,24 +178,41 @@ static void prv_lfs_init(void) {
     lfs_mount(&lfs, &cfg);
   }
 
+  // read and update current erase count
+  {
+    uint32_t erase_count_read = 0;
+    lfs_file_t file;
+    while (erase_count_read != erase_count) {
+      lfs_file_open(&lfs, &file, "erase_count", LFS_O_RDWR | LFS_O_CREAT);
+      lfs_file_read(&lfs, &file, &erase_count_read, sizeof(erase_count));
+      lfs_file_rewind(&lfs, &file);
+      lfs_file_write(&lfs, &file, &erase_count, sizeof(erase_count));
+      lfs_file_close(&lfs, &file);
+    }
+    printf("erase_count: %" PRIu32 "\n", erase_count);
+  }
+
   // read current count
-  uint32_t boot_count = 0;
-  lfs_file_open(&lfs, &file, "boot_count", LFS_O_RDWR | LFS_O_CREAT);
-  lfs_file_read(&lfs, &file, &boot_count, sizeof(boot_count));
+  {
+    lfs_file_t file;
+    uint32_t boot_count = 0;
+    lfs_file_open(&lfs, &file, "boot_count", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_read(&lfs, &file, &boot_count, sizeof(boot_count));
 
-  // update boot count
-  boot_count += 1;
-  lfs_file_rewind(&lfs, &file);
-  lfs_file_write(&lfs, &file, &boot_count, sizeof(boot_count));
+    // update boot count
+    boot_count += 1;
+    lfs_file_rewind(&lfs, &file);
+    lfs_file_write(&lfs, &file, &boot_count, sizeof(boot_count));
 
-  // remember the storage is not updated until the file is closed successfully
-  lfs_file_close(&lfs, &file);
+    // remember the storage is not updated until the file is closed successfully
+    lfs_file_close(&lfs, &file);
+
+    // print the boot count
+    printf("boot_count: %" PRIu32 "\n", boot_count);
+  }
 
   // release any resources we were using
   lfs_unmount(&lfs);
-
-  // print the boot count
-  printf("boot_count: %" PRIu32 "\n", boot_count);
 }
 
 #endif
