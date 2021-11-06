@@ -29,7 +29,8 @@ FLAGS = \
   ENABLE_SEMIHOSTING \
   ENABLE_RTT \
   ENABLE_MEMFAULT \
-  ENABLE_MEMFAULT_DEMO
+  ENABLE_MEMFAULT_DEMO \
+  ENABLE_NOCLI
 
 CFLAGS += $(foreach flag,$(FLAGS),-D$(flag)=$(or $(findstring 1,$($(flag))),0))
 
@@ -90,6 +91,7 @@ LDFLAGS += -Wl,--wrap=malloc,--wrap=free
 endif
 
 INCLUDES += \
+  src/ \
   third-party/CMSIS_5/CMSIS/Core/Include \
 
 CFLAGS += $(addprefix -I,$(INCLUDES))
@@ -141,6 +143,11 @@ SRCS += \
   third-party/segger-rtt/RTT/SEGGER_RTT.c \
   third-party/segger-rtt/Syscalls/SEGGER_RTT_Syscalls_GCC.c \
 
+endif
+
+ifneq (,$(ENABLE_NOCLI))
+SRCS += \
+  third-party/nocli/nocli.c
 endif
 
 all: $(TARGET)

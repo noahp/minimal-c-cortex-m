@@ -5,6 +5,10 @@
 #include "memfault/components.h"
 #endif
 
+#if ENABLE_NOCLI
+#include "third-party/nocli/nocli.h"
+#endif
+
 #if ENABLE_RTT
 #include "third-party/segger-rtt/RTT/SEGGER_RTT.h"
 
@@ -43,11 +47,42 @@ static sMemfaultShellImpl memfault_shell_impl = {
 #endif
 #endif
 
+#if ENABLE_NOCLI
+static void prv_nocli_output(const char *buf, size_t len) {
+  fwrite(buf, 1, len, stdout);
+}
+
+static void fs(int argc, char **argv) {
+  (void)argc, (void)argv;
+  printf("function called!\n");
+}
+#endif
+
 int main(void) {
 #if ENABLE_SEMIHOSTING
   initialise_monitor_handles();
 #elif ENABLE_RTT
   SEGGER_RTT_Init();
+#endif
+
+#if ENABLE_NOCLI
+  struct NocliPrivate nocli_private;
+  struct NocliCommand commands[] = {{
+      .name = "fs",
+      .function = fs,
+      .help = "fs help",
+  }};
+  struct Nocli nocli_ctx = {
+      .output_stream = prv_nocli_output,
+      .command_table = commands,
+      .command_table_length = sizeof(commands) / sizeof(*commands),
+      .prefix_string = "console $",
+      .echo_on = true,
+      .private = &nocli_private,
+  };
+
+  Nocli_Init(&nocli_ctx);
+
 #endif
 
 #if ENABLE_STDIO
@@ -70,6 +105,12 @@ int main(void) {
 
     if (read(0, &c, sizeof(c))) {
       memfault_demo_shell_receive_char(c);
+    }
+#elif ENABLE_NOCLI
+    char c;
+
+    if (read(0, &c, sizeof(c))) {
+      Nocli_Feed(&nocli_ctx, &c, sizeof(c));
     }
 #endif
   };
