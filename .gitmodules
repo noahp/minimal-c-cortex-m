@@ -12,5 +12,8 @@
 	path = third-party/nocli
 	url = ../../noahp/nocli
 [submodule "third-party/littlfs"]
-	path = third-party/littlfs
+	path = third-party/littlefs
 	url = ../../littlefs-project/littlefs
+[submodule "third-party/libopencm3"]
+	path = third-party/libopencm3
+	url = ../../libopencm3/libopencm3

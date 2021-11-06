@@ -4,6 +4,8 @@
 //! - reset handler (system init)
 #include <stdint.h>
 
+#include CHIP_SPECIFIC_INCLUDE
+
 #if ENABLE_MEMFAULT
 #include "memfault/components.h"
 #endif

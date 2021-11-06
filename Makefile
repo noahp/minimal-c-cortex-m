@@ -13,6 +13,8 @@ ifdef CCACHE
 CC := ccache $(CC)
 endif
 
+GDB ?= arm-none-eabi-gdb-py
+
 SIZE = arm-none-eabi-size
 RM = rm -rf
 
@@ -30,7 +32,8 @@ FLAGS = \
   ENABLE_RTT \
   ENABLE_MEMFAULT \
   ENABLE_MEMFAULT_DEMO \
-  ENABLE_NOCLI
+  ENABLE_NOCLI \
+  ENABLE_LITTLEFS
 
 CFLAGS += $(foreach flag,$(FLAGS),-D$(flag)=$(or $(findstring 1,$($(flag))),0))
 
@@ -150,6 +153,24 @@ SRCS += \
   third-party/nocli/nocli.c
 endif
 
+ifneq (,$(ENABLE_LITTLEFS))
+SRCS += \
+  third-party/littlefs/lfs.c \
+  third-party/littlefs/lfs_util.c \
+
+# use the libopencm3 flash driver
+SRCS += \
+ third-party/libopencm3/lib/stm32/f4/flash.c \
+ third-party/libopencm3/lib/stm32/common/flash_common_all.c \
+ third-party/libopencm3/lib/stm32/common/flash_common_f.c \
+ third-party/libopencm3/lib/stm32/common/flash_common_f24.c \
+
+CFLAGS += \
+  -Ithird-party/libopencm3/include \
+  -DSTM32F4=1 \
+
+endif
+
 all: $(TARGET)
 
 OBJS = $(patsubst %.c, %.o, $(SRCS))
@@ -206,6 +227,6 @@ debug: $(TARGET)
 	$(FLASH_CMD)
 
 gdb: $(TARGET)
-	arm-none-eabi-gdb-py $(TARGET) -ex "source .gdb-startup" -ex $(GDB_RELOAD_CMD)
+	$(GDB) $(TARGET) -ex "source .gdb-startup" -ex $(GDB_RELOAD_CMD)
 
 .PHONY: all clean debug gdb

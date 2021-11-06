@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include CHIP_SPECIFIC_INCLUDE
+
 #include "memfault/components.h"
 #include "memfault/ports/reboot_reason.h"
 
