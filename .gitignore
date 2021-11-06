@@ -1,8 +1,11 @@
+*.cgraph
+*.dfinish
 *.elf
 *.hex
 *.map
 *.o
 *.o.d
+*.su
 /build/cflags
 /build/link.ld
 /compile_commands.json

@@ -69,7 +69,7 @@ endif
 
 CFLAGS += \
   $(ARCHFLAGS) \
-  -Os -ggdb3 -std=c11 \
+  -Os -ggdb3 -std=gnu11 \
   -fdebug-prefix-map=$(abspath .)=. \
   -I. \
   -ffunction-sections -fdata-sections \
@@ -118,9 +118,11 @@ LDFLAGS += \
 
 LDFLAGS += -Wl,--gc-sections,-Map,$(TARGET).map,--build-id
 
-# print memory usage if linking with gnu ld
 ifeq ($(USING_CLANG),)
+# print memory usage if linking with gnu ld
 LDFLAGS += -Wl,--print-memory-usage
+# additional gcc-specific flags, used for computing stack usage
+CFLAGS += -fstack-usage -fdump-rtl-dfinish -fdump-ipa-cgraph
 endif
 
 SRCS += \
