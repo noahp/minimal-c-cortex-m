@@ -69,7 +69,7 @@ endif
 
 CFLAGS += \
   $(ARCHFLAGS) \
-  -Os -ggdb3 -std=c11 \
+  -Os -ggdb3 -std=gnu11 -fstack-usage -fdump-rtl-dfinish -fdump-ipa-cgraph \
   -fdebug-prefix-map=$(abspath .)=. \
   -I. \
   -ffunction-sections -fdata-sections \

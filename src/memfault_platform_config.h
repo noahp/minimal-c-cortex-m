@@ -24,6 +24,8 @@ extern "C" {
 #define MEMFAULT_COREDUMP_COLLECT_HEAP_STATS 1
 #define MEMFAULT_COREDUMP_COLLECT_LOG_REGIONS 1
 
+// #define MEMFAULT_COMPACT_LOG_ENABLE 1
+
 #ifdef __cplusplus
 }
 #endif
