@@ -14,7 +14,8 @@ RUN apt-get update && apt-get -y install --no-install-recommends \
     llvm-12 \
     pv \
     python3-pip \
-    wget
+    wget \
+    && rm -rf /var/lib/apt/lists/*
 
 ARG ARM_URL=https://developer.arm.com/-/media/Files/downloads/gnu-rm/10.3-2021.07/gcc-arm-none-eabi-10.3-2021.07-x86_64-linux.tar.bz2
 ARG ARM_SHA256=8c5b8de344e23cd035ca2b53bbf2075c58131ad61223cae48510641d3e556cea
@@ -35,7 +36,7 @@ ARG UID=1010
 ARG UNAME=builder
 
 RUN useradd --uid $UID --create-home --user-group ${UNAME} && \
-    echo "${UNAME}:${UNAME}" | chpasswd && adduser ${UNAME} sudo
+    echo "${UNAME}:${UNAME}" | chpasswd
 
 USER ${UNAME}
 

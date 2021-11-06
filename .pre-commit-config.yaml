@@ -20,6 +20,7 @@ repos:
       - id: check-symlinks # checks for symlinks which do not point to anything.
       # - id: check-vcs-permalinks # ensures that links to vcs websites are permalinks.
       - id: check-yaml # checks yaml files for parseable syntax.
+        exclude: .clang-format
       - id: destroyed-symlinks # detects symlinks which are changed to regular files with a content of a path which that symlink was pointing to.
       - id: detect-private-key # detects the presence of private keys.
       - id: end-of-file-fixer # ensures that a file is either empty, or ends with one newline.
