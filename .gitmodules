@@ -11,3 +11,6 @@
 [submodule "third-party/nocli"]
 	path = third-party/nocli
 	url = ../../noahp/nocli
+[submodule "third-party/littlfs"]
+	path = third-party/littlfs
+	url = ../../littlefs-project/littlefs
