@@ -11,7 +11,7 @@ ARCHFLAGS += \
   -mfpu=fpv4-sp-d16 \
   -include $(_THIS_DIR)/nrf52840.h
 
-FLASH_CMD = \
+DEBUG_CMD = \
     JLinkGDBServerCLExe -USB -device nRF52840_xxAA -endian little -if SWD \
     -speed auto -noir -LocalhostOnly -port 3333
 GDB_RELOAD_CMD = jlink-reload

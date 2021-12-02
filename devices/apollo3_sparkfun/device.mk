@@ -12,7 +12,7 @@ ARCHFLAGS += \
   -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 \
   -include $(_THIS_DIR)/apollo3.h \
 
-FLASH_CMD = \
+DEBUG_CMD = \
     JLinkGDBServerCLExe -USB -device ama3b1kk-kcr -endian little -if SWD \
     -speed auto -noir -LocalhostOnly -port 3333
 GDB_RELOAD_CMD = jlink-reload

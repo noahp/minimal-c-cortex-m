@@ -11,7 +11,7 @@ ARCHFLAGS += \
   -mfpu=fpv4-sp-d16 \
   -include $(_THIS_DIR)/stm32f407xx.h
 
-# FLASH_CMD = pyocd gdbserver
+# DEBUG_CMD = pyocd gdbserver
 # GDB_RELOAD_CMD = pyocd-reload
-FLASH_CMD = openocd -f $(_THIS_DIR)/stm32f4.openocd.cfg
+DEBUG_CMD = openocd -f $(_THIS_DIR)/stm32f4.openocd.cfg
 GDB_RELOAD_CMD = openocd-reload

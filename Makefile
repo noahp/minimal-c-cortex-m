@@ -195,8 +195,8 @@ $(TARGET): $(LINKER_SCRIPT) $(OBJS)
 	$(CC) $(CFLAGS) -T$^ $(LDFLAGS) -o $@
 	$(SIZE) $(TARGET)
 
-debug: $(TARGET)
-	$(FLASH_CMD)
+debug:
+	$(DEBUG_CMD)
 
 gdb: $(TARGET)
 	arm-none-eabi-gdb-py $(TARGET) -ex "source .gdb-startup" -ex $(GDB_RELOAD_CMD)

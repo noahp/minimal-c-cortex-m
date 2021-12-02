@@ -7,5 +7,5 @@ ARCHFLAGS += \
   -mcpu=cortex-m0plus \
   -include $(_THIS_DIR)/MKL02Z4.h \
 
-FLASH_CMD = @ echo $(DEVICE) flashing/debug not currently supported
+DEBUG_CMD = @ echo $(DEVICE) flashing/debug not currently supported
 GDB_RELOAD_CMD = jlink-reload
