@@ -122,7 +122,12 @@ ifeq ($(USING_CLANG),)
 # print memory usage if linking with gnu ld
 LDFLAGS += -Wl,--print-memory-usage
 # additional gcc-specific flags, used for computing stack usage
-CFLAGS += -fstack-usage -fdump-rtl-dfinish -fdump-ipa-cgraph
+CFLAGS += -fstack-usage
+
+# these can be used with the program below to compute call stack usage
+# https://github.com/sharkfox/stack-usage
+# ccache doesn't support them, so disabled
+# CFLAGS += -fdump-rtl-dfinish -fdump-ipa-cgraph
 endif
 
 SRCS += \
