@@ -26,6 +26,48 @@ build):
 ❯ until telnet localhost 9090; do sleep 0.5; done
 ```
 
+## Build and test with Memfault
+
+Assumes all prerequisites are installed (openocd, gcc-arm).
+
+1. connect the STM32F4 Discovery board
+2. start the debug server:
+
+   ```bash
+   ❯ make debug
+   Open On-Chip Debugger 0.11.0-rc2
+   Licensed under GNU GPL v2
+   For bug reports, read
+           http://openocd.org/doc/doxygen/bugs.html
+   Info : The selected transport took over low-level target control. The results might differ compared to plain JTAG/SWD
+   Info : clock speed 2000 kHz
+   Info : STLINK V2J25M14 (API v2) VID:PID 0483:374B
+   Info : Target voltage: 2.890490
+   Info : stm32f4x.cpu: hardware has 6 breakpoints, 4 watchpoints
+   Info : starting gdb server for stm32f4x.cpu on 3333
+   Info : Listening on port 3333 for gdb connections
+   semihosting is enabled
+
+   Info : Listening on port 6666 for tcl connections
+   Info : Listening on port 4444 for telnet connections
+   ```
+
+3. in another terminal, build and start gdb (this also flashes the binary):
+
+   ```bash
+   ❯ ENABLE_STDIO=1 ENABLE_RTT=1 ENABLE_MEMFAULT=1 ENABLE_MEMFAULT_DEMO=1 make gdb
+   ```
+
+4. in a 3rd terminal, start trying to connect telnet to the RTT server:
+
+   ```bash
+   ❯ until telnet localhost 9090; do sleep 0.5; done
+   ```
+
+5. in the gdb terminal (2nd terminal), run `c` or `continue` to start the board
+6. you should see output in the RTT terminal. press enter a few times to start
+   using the Memfault demo console
+
 ## QEMU for stm32f407 discovery
 
 You can run the application in QEMU, here's what I did:
