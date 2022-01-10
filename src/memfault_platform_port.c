@@ -220,13 +220,13 @@ uint64_t memfault_platform_get_time_since_boot_ms(void) {
 MEMFAULT_PUT_IN_SECTION(".noinit.mflt_reboot_tracking")
 static uint8_t s_reboot_tracking[MEMFAULT_REBOOT_TRACKING_REGION_SIZE];
 
-MEMFAULT_WEAK void memfault_platform_reboot_tracking_boot(void) {
+void memfault_platform_reboot_tracking_boot(void) {
   sResetBootupInfo reset_info = {0};
   memfault_reboot_reason_get(&reset_info);
   memfault_reboot_tracking_boot(s_reboot_tracking, &reset_info);
 }
 
-void memfault_reboot_reason_get(sResetBootupInfo *info) {
+MEMFAULT_WEAK void memfault_reboot_reason_get(sResetBootupInfo *info) {
   const uint32_t reset_cause = 0;  // TODO: Populate with MCU reset reason
   eMemfaultRebootReason reset_reason = kMfltRebootReason_Unknown;
 

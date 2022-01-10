@@ -9,7 +9,17 @@ ARCHFLAGS += \
   -mcpu=cortex-m7 \
   -mfloat-abi=hard \
   -mfpu=fpv5-d16 \
-  -include $(_THIS_DIR)/stm32f756xx.h
+  -include $(_THIS_DIR)/stm32f756xx.h \
+  -I$(_THIS_DIR)/HAL \
+  -I$(_THIS_DIR) \
+  -DSTM32F756xx=1 \
+
+ifeq ($(ENABLE_MEMFAULT),1)
+# TODO define this path elsewhere eg MEMFAULT_SDK_ROOT
+SRCS += \
+  third-party/memfault-firmware-sdk/ports/stm32cube/f7/rcc_reboot_tracking.c
+
+endif
 
 # DEBUG_CMD = pyocd gdbserver
 # GDB_RELOAD_CMD = pyocd-reload
