@@ -1,8 +1,20 @@
 #include <stdio.h>
 #include <unistd.h>
 
+// only 1 transport should be set
+#if (ENABLE_SEMIHOSTING + ENABLE_RTT + ENABLE_UART) > 1
+#error "Only one transport should be enabled"
+#endif
+
 #if ENABLE_MEMFAULT
 #include "memfault/components.h"
+#endif
+
+#if ENABLE_UART
+// these should be implemented by the device-specific code
+void uart_init(void);
+void uart_putc(char c);
+int uart_getc(void);
 #endif
 
 #if ENABLE_RTT
@@ -48,6 +60,8 @@ int main(void) {
   initialise_monitor_handles();
 #elif ENABLE_RTT
   SEGGER_RTT_Init();
+#elif ENABLE_UART
+  uart_init();
 #endif
 
 #if ENABLE_STDIO
