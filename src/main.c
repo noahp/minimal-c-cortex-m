@@ -43,12 +43,25 @@ static sMemfaultShellImpl memfault_shell_impl = {
 #endif
 #endif
 
+#include <assert.h>
+
+void __assert_func(const char *file, int line, const char *func,
+                   const char *failedexpr) {
+  (void)file;
+  (void)line;
+  (void)func;
+  (void)failedexpr;
+  MEMFAULT_ASSERT(0);
+}
+
 int main(void) {
 #if ENABLE_SEMIHOSTING
   initialise_monitor_handles();
 #elif ENABLE_RTT
   SEGGER_RTT_Init();
 #endif
+
+  assert(0);
 
 #if ENABLE_STDIO
   // line buffering on stdout
