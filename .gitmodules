@@ -8,3 +8,7 @@
 	path = third-party/CMSIS_5
 	url = ../../ARM-software/CMSIS_5
 	shallow = true
+[submodule "third-party/bsp/STM32CubeWL"]
+	path = third-party/bsp/STM32CubeWL
+	url = ../../STMicroelectronics/STM32CubeWL
+	shallow = true
