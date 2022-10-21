@@ -43,6 +43,8 @@ static sMemfaultShellImpl memfault_shell_impl = {
 #endif
 #endif
 
+#include "ramfuncs.h"
+
 int main(void) {
 #if ENABLE_SEMIHOSTING
   initialise_monitor_handles();
@@ -69,6 +71,10 @@ int main(void) {
     char c;
 
     if (read(0, &c, sizeof(c))) {
+      if (c == '1') {
+        int rv = ramfunc_run(1, 2);
+        printf("ramfunc_run(1, 2) = %d", rv);
+      }
       memfault_demo_shell_receive_char(c);
     }
 #endif

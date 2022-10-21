@@ -133,6 +133,7 @@ endif
 SRCS += \
     src/main.c \
     src/interrupts.c \
+    src/ramfuncs.c \
 
 ifneq (,$(ENABLE_RTT))
 # disable asm for simplicity
@@ -150,7 +151,7 @@ endif
 
 all: $(TARGET)
 
-OBJS = $(patsubst %.c, %.o, $(SRCS))
+OBJS = $(SRCS:%.c=%.c.o)
 OBJS := $(addprefix $(BUILDDIR)/,$(OBJS))
 
 # depfiles for tracking include changes
@@ -177,7 +178,7 @@ $(BUILDDIR)/cflags: $(CFLAGS_STALE)
 	mkdir -p $(dir $@)
 	echo "$(RAW_CFLAGS)" > $@
 
-$(BUILDDIR)/%.o: %.c $(BUILDDIR)/cflags
+$(BUILDDIR)/%.c.o: %.c $(BUILDDIR)/cflags
 	mkdir -p $(dir $@)
 	$(info Compiling $<)
 	$(CC) $(CFLAGS) $(DEPFLAGS) -c $< -o $@

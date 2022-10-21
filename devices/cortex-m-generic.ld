@@ -37,7 +37,8 @@ RAM_LENGTH = DEFINED(RAM_LENGTH) ? RAM_LENGTH : 0x0;
 MEMORY
 {
 	rom (rx) : ORIGIN = ROM_ORIGIN, LENGTH = ROM_LENGTH
-	ram (rwx) : ORIGIN = RAM_ORIGIN, LENGTH = RAM_LENGTH
+	ram (rwx) : ORIGIN = RAM_ORIGIN, LENGTH = RAM_LENGTH - 1000
+	ramfunc (rx) : ORIGIN = RAM_ORIGIN + RAM_LENGTH - 1000, LENGTH = 1000
 }
 
 /* Enforce emmition of the vector table. */
@@ -49,8 +50,38 @@ ENTRY(Reset_Handler)
 /* Define sections. */
 SECTIONS
 {
+	/* ram, but not cleared on reset, eg boot/app comms */
+	.noinit (NOLOAD) : {
+		*(.noinit*)
+	} >ram
+	. = ALIGN(4);
+
+	.ramfuncs : {
+		_data = .;
+		*ramfuncs.c.o(.text .text*)
+	} >ram AT >rom
+	/* } >ramfunc AT >rom */
+
+	.data : {
+		*(.data*)	/* Read-write initialized data */
+		*(.ramtext*)    /* "text" functions to run in ram */
+		. = ALIGN(4);
+		_edata = .;
+	} >ram AT >rom
+	_data_loadaddr = LOADADDR(.data);
+
+
+	.bss : {
+		_bss = .;
+		*(.bss*)	/* Read-write zero initialized data */
+		*(COMMON)
+		. = ALIGN(4);
+		_ebss = .;
+	} >ram
+
 	.text : {
 		*(.vectors)	/* Vector table */
+		/* *(EXCLUDE_FILE(*ramfuncs.c.o) .text EXCLUDE_FILE(*ramfuncs.c.o) .text*) */
 		*(.text*)	/* Program code */
 		. = ALIGN(4);
 		*(.rodata*)	/* Read-only data */
@@ -102,28 +133,7 @@ SECTIONS
 	. = ALIGN(4);
 	_etext = .;
 
-	/* ram, but not cleared on reset, eg boot/app comms */
-	.noinit (NOLOAD) : {
-		*(.noinit*)
-	} >ram
-	. = ALIGN(4);
 
-	.data : {
-		_data = .;
-		*(.data*)	/* Read-write initialized data */
-		*(.ramtext*)    /* "text" functions to run in ram */
-		. = ALIGN(4);
-		_edata = .;
-	} >ram AT >rom
-	_data_loadaddr = LOADADDR(.data);
-
-	.bss : {
-		_bss = .;
-		*(.bss*)	/* Read-write zero initialized data */
-		*(COMMON)
-		. = ALIGN(4);
-		_ebss = .;
-	} >ram
 
 	/*
 	 * The .eh_frame section appears to be used for C++ exception handling.
