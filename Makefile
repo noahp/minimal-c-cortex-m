@@ -29,6 +29,7 @@ FLAGS = \
   ENABLE_SEMIHOSTING \
   ENABLE_RTT \
   ENABLE_MEMFAULT \
+  ENABLE_MEMFAULT_METRICS \
   ENABLE_MEMFAULT_DEMO
 
 CFLAGS += $(foreach flag,$(FLAGS),-D$(flag)=$(or $(findstring 1,$($(flag))),0))

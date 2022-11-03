@@ -3,7 +3,10 @@
 MEMFAULT_PORT_ROOT := src
 MEMFAULT_SDK_ROOT := third-party/memfault-firmware-sdk
 
-MEMFAULT_COMPONENTS := core util panics metrics
+MEMFAULT_COMPONENTS := core util panics
+ifeq ($(ENABLE_MEMFAULT_METRICS),1)
+MEMFAULT_COMPONENTS += metrics
+endif
 ifeq ($(ENABLE_MEMFAULT_DEMO),1)
 MEMFAULT_COMPONENTS += demo
 endif

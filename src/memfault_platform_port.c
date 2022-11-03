@@ -157,10 +157,12 @@ int memfault_platform_boot(void) {
 
   memfault_reboot_tracking_collect_reset_info(evt_storage);
 
+#if ENABLE_MEMFAULT_METRICS
   sMemfaultMetricBootInfo boot_info = {
       .unexpected_reboot_count = memfault_reboot_tracking_get_crash_count(),
   };
   memfault_metrics_boot(evt_storage, &boot_info);
+#endif
 
   memfault_device_info_dump();
   MEMFAULT_LOG_INFO("Memfault Initialized!");
