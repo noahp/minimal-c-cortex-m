@@ -34,6 +34,7 @@ void *__wrap_malloc(size_t size) {
 #if ENABLE_MEMFAULT_DEMO
 static int send_char(char c) {
   putchar(c);
+  fflush(stdout);
   return 0;
 }
 
@@ -69,6 +70,12 @@ int main(void) {
     char c;
 
     if (read(0, &c, sizeof(c))) {
+#if defined(BOARD_qemu_mps2_an385)
+      // hack workaround, the qemu console sends \r instead of \n
+      if (c == '\r') {
+        c = '\n';
+      }
+#endif
       memfault_demo_shell_receive_char(c);
     }
 #endif

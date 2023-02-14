@@ -50,6 +50,10 @@ __attribute__((noreturn)) void Reset_Handler(void) {
 
   prv_cinit();
 
+#if defined(SYSTEM_INIT_HANDLER)
+  SYSTEM_INIT_HANDLER();
+#endif
+
   // Call the application's entry point.
   (void)main();
 

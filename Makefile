@@ -21,7 +21,9 @@ BUILDDIR = build
 TARGET = $(BUILDDIR)/main.elf
 
 DEVICE ?= stm32f4discovery
-CFLAGS += -DBOARD_$(DEVICE)
+CFLAGS += \
+  -DBOARD_$(DEVICE) \
+  -DBOARD_NAME=\"$(DEVICE)\"
 
 # set C preprocessor tokens of 0 or 1 for each flag
 FLAGS = \
@@ -117,7 +119,9 @@ LDFLAGS += \
   -lg_nano -lnosys \
   $(shell $(ARM_CC) $(ARCHFLAGS) -print-libgcc-file-name 2>&1)
 
-LDFLAGS += -Wl,--gc-sections,-Map,$(TARGET).map,--build-id
+# Specifiy --buil-id=sha1 - the default when using lld is 'fast', which is not
+# compatible with the default ld uses, 'sha1', so explicitly set it!
+LDFLAGS += -Wl,--gc-sections,-Map,$(TARGET).map,--build-id=sha1
 
 ifeq ($(USING_CLANG),)
 # print memory usage if linking with gnu ld
@@ -201,7 +205,7 @@ $(TARGET): $(LINKER_SCRIPT) $(OBJS)
 	$(CC) $(CFLAGS) -T$^ $(LDFLAGS) -o $@
 	$(SIZE) $(TARGET)
 
-debug:
+debug: $(TARGET)
 	$(DEBUG_CMD)
 
 gdb: $(TARGET)

@@ -14,7 +14,7 @@
 #include "memfault/components.h"
 #include "memfault/ports/reboot_reason.h"
 
-static char device_serial[96 / 8 * 2 + sizeof("-noahp")] = {"minicortex"};
+static char device_serial[96 / 8 * 2 + sizeof("-noahp")] = {"minicortex-2"};
 
 #ifdef BOARD_stm32f4discovery
 
@@ -59,16 +59,17 @@ void memfault_platform_get_device_info(sMemfaultDeviceInfo *info) {
       // (i.e evt, dvt, pvt, or rev1, rev2, etc)
       // Regular expression defining valid hardware versions:
       // ^[-a-zA-Z0-9_\.\+]+$
-      .hardware_version = "dvt1",
+      .hardware_version = BOARD_NAME,
   };
 }
 
 //! Last function called after a coredump is saved. Should perform
 //! any final cleanup and then reset the device
 void memfault_platform_reboot(void) {
-  // !FIXME: Perform any final system cleanup here
-
+// qemu goes into lockup if we try to issue debugmon exception here 🤷
+#if !defined(BOARD_qemu_mps2_an385)
   __asm__("bkpt 99");
+#endif
   NVIC_SystemReset();
   while (1) {
   }  // unreachable
