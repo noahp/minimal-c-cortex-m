@@ -36,6 +36,14 @@ __attribute__((noinline)) static void prv_cinit(void) {
   for (uint32_t *dst = &_bss; (uintptr_t)dst < (uintptr_t)&_ebss;) {
     *(dst++) = 0;
   }
+
+  // Paint the stack with a known pattern, so we can measure stack usage at
+  // runtime. Make sure to start above the current stack pointer, so we don't
+  // overwrite any locals.
+  uint32_t *sp = (uint32_t *)__builtin_frame_address(0);
+  for (uint32_t *dst = sp - 1; (uintptr_t)dst > (uintptr_t)&_ebss;) {
+    *(dst--) = 0xa5a5a5a5;
+  }
 }
 
 __attribute__((noreturn)) void Reset_Handler(void) {

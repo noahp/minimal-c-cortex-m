@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <stdint.h>
 
 #if ENABLE_MEMFAULT
 #include "memfault/components.h"
@@ -44,6 +45,34 @@ static sMemfaultShellImpl memfault_shell_impl = {
 #endif
 #endif
 
+struct stack_info {
+  uint32_t *start;
+  uint32_t *end;
+  uint32_t high_watermark;
+};
+
+__attribute__((noinline)) struct stack_info get_stack_info(void) {
+  extern uint32_t _stack;
+  extern uint32_t _ebss;
+  struct stack_info info = {
+      .start = &_stack,
+      .end = &_ebss,
+  };
+
+  uint32_t *sp = (uint32_t *)__builtin_frame_address(0);
+  // random assumption that the max stack is less than this. heap grows down
+  // from _ebss so we can't make assumptions where the max stack limit actually
+  // is; could use mallinfo to extract max heap usage though!
+  uint32_t *high_watermark = sp - 4096;
+
+  while (high_watermark < sp && *high_watermark == 0xa5a5a5a5) {
+    high_watermark++;
+  }
+  info.high_watermark = (uint32_t)high_watermark;
+
+  return info;
+}
+
 int main(void) {
 #if ENABLE_SEMIHOSTING
   initialise_monitor_handles();
@@ -55,7 +84,11 @@ int main(void) {
   // line buffering on stdout
   setvbuf(stdout, NULL, _IOLBF, 0);
 
-  printf("🦄 Hello there!\n");
+  // struct stack_info su_before = get_stack_info();
+  printf("🦄 Hello there! %0.3f\n", 123.456f);
+  // struct stack_info su_after = get_stack_info();
+  printf("hello done!\n");
+  // printf("Stack usage: %ld bytes\n", su_after.high_watermark - su_before.high_watermark);
 #endif
 
 #if ENABLE_MEMFAULT

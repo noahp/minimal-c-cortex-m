@@ -20,6 +20,9 @@ RM = rm -rf
 BUILDDIR = build
 TARGET = $(BUILDDIR)/main.elf
 
+# default to newlib-nano
+NEWLIB_NANO ?= y
+
 DEVICE ?= stm32f4discovery
 CFLAGS += \
   -DBOARD_$(DEVICE) \
@@ -44,9 +47,15 @@ LINKER_SCRIPT ?= $(DEFAULT_LINKER_SCRIPT)
 
 ARCHFLAGS += -mlittle-endian -mthumb
 
-# this should be before libraries it depends on, eg libgcc and libnosys
+# this should be before libraries it depends on, eg libgcc and libnosys.
 # manually specify libgcc_nano, only gcc has the magic .specs aliasing logic
+ifeq (y,$(NEWLIB_NANO))
 LDFLAGS += -lc_nano
+endif
+
+ifneq (y,$(NO_PRINTF_FLOAT))
+LDFLAGS += -u _printf_float
+endif
 
 # clang support
 CC_VERSION_INFO := $(shell $(CC) --version)
@@ -100,23 +109,36 @@ CFLAGS += $(addprefix -I,$(INCLUDES))
 LDFLAGS += -nostdlib
 
 ifeq (1,$(ENABLE_SEMIHOSTING))
-# add rdimon specs, and include stdlib when linking
-ifeq ($(USING_CLANG),)
-LDFLAGS += \
-  --specs=rdimon.specs
-endif
-LDFLAGS += -lrdimon_nano
+  # add rdimon specs, and include stdlib when linking
+  ifeq ($(USING_CLANG),)
+    LDFLAGS += \
+      --specs=rdimon.specs
+  endif
+    LDFLAGS += -lrdimon_nano
 else
-# omit stdlib, but add libnosys and libgcc manually instead of providing a local
-# port, so stdlib functions are available. this makes it easy to use clang too.
-ifeq ($(USING_CLANG),)
-LDFLAGS += \
-  --specs=nano.specs --specs=nosys.specs
+  # omit stdlib, but add libnosys and libgcc manually instead of providing a local
+  # port, so stdlib functions are available. this makes it easy to use clang too.
+  ifeq ($(USING_CLANG),)
+    ifeq (y,$(NEWLIB_NANO))
+      LDFLAGS += \
+        --specs=nosys.specs \
+        --specs=nano.specs
+    else
+      LDFLAGS += \
+        --specs=nosys.specs \
+        -lc
+    endif
+  endif
 endif
+
+ifeq (y,$(NEWLIB_NANO))
+LDFLAGS += -lg_nano
+else
+LDFLAGS += -lg
 endif
 
 LDFLAGS += \
-  -lg_nano -lnosys \
+  -lnosys \
   $(shell $(ARM_CC) $(ARCHFLAGS) -print-libgcc-file-name 2>&1)
 
 # Specifiy --buil-id=sha1 - the default when using lld is 'fast', which is not
