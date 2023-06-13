@@ -82,12 +82,17 @@ int main(void) {
 
 #if ENABLE_STDIO
   // line buffering on stdout
-  setvbuf(stdout, NULL, _IOLBF, 0);
+  int result = setvbuf(stdout, NULL, _IOLBF, 0);
 
   // struct stack_info su_before = get_stack_info();
-  printf("🦄 Hello there! %0.3f\n", 123.456f);
+  // printf("🦄 Hello there! %0.3f\n", 123.456f);
   // struct stack_info su_after = get_stack_info();
-  printf("hello done!\n");
+
+  // MEMFAULT_TRACE_EVENT_WITH_LOG(test_trace, "compact log test %d", result);
+
+  // MEMFAULT_LOG_INFO("compact log test %d %d %d", 1, 2, 3);
+
+  // printf("hello done!\n");
   // printf("Stack usage: %ld bytes\n", su_after.high_watermark - su_before.high_watermark);
 #endif
 
@@ -96,6 +101,9 @@ int main(void) {
   memfault_demo_shell_boot(&memfault_shell_impl);
 #endif
   memfault_platform_boot();
+
+  MEMFAULT_TRACE_EVENT_WITH_LOG(test_trace, "compact log test %d", result);
+
 #endif
 
   while (1) {

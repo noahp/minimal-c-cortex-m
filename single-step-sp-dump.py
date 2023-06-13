@@ -74,17 +74,38 @@ class SingleStepSPTrace(gdb.Command):
         sp_start = int(gdb.parse_and_eval("$sp"))
         print("Starting SP: 0x{:08x}".format(sp_start))
 
-        sp_min = 0xFFFFFFFF
-        while True:
-            gdb.execute("si")
-            sp = int(gdb.parse_and_eval("$sp"))
-            # with open(outfile, "a") as f:
-            #     f.write("%s" % sp)
-            if sp < sp_min:
-                sp_min = sp
-            # check if we've reached a breakpoint
-            if hit_breakpoint():
-                break
+
+        with open(outfile, "w") as f:
+            sp_min = 0xFFFFFFFF
+            current_function = None
+            current_function_max_su = 0
+            while True:
+                gdb.execute("si")
+                sp = int(gdb.parse_and_eval("$sp"))
+                su = sp_start - sp
+                name = gdb.selected_frame().name()
+
+                # if we just changed function name, record the high water mark
+                # from the last function
+                if current_function is not None and name != current_function:
+                    f.write(f"{current_function}|{current_function_max_su}\n")
+                    current_function_max_su = 0
+
+                current_function = name
+
+                if su > current_function_max_su:
+                    current_function_max_su = su
+
+                # f.write(f"{current_function}|{current_function_max_su}\n")
+
+                if sp < sp_min:
+                    sp_min = sp
+
+                # check if we've reached a breakpoint
+                if hit_breakpoint():
+                    break
+            f.write(f"{current_function}|{current_function_max_su}\n")
+
 
         print("Min SP: 0x{:08x}".format(sp_min))
         print("Delta SP: {}".format(sp_start - sp_min))

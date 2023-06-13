@@ -173,6 +173,8 @@ int memfault_platform_boot(void) {
 
 void memfault_platform_log(eMemfaultPlatformLogLevel level, const char *fmt,
                            ...) {
+  (void)level, (void)fmt;
+
   const char *lvl_str;
   switch (level) {
     case kMemfaultPlatformLogLevel_Debug:
