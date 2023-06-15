@@ -63,6 +63,14 @@ class SingleStepSPTrace(gdb.Command):
             print("Breakpoint {}:  0x{:08x}".format(bp.number, address))
             bp_addresses.append(address)
 
+        def hit_breakpoint():
+            pc = int(gdb.parse_and_eval("$pc"))
+            if pc in bp_addresses:
+                print("Hit breakpoint at 0x{:08x}".format(pc))
+                return True
+            else:
+                return False
+
         sp_start = int(gdb.parse_and_eval("$sp"))
         print("Starting SP: 0x{:08x}".format(sp_start))
 
@@ -75,9 +83,7 @@ class SingleStepSPTrace(gdb.Command):
             if sp < sp_min:
                 sp_min = sp
             # check if we've reached a breakpoint
-            pc = int(gdb.parse_and_eval("$pc"))
-            if pc in bp_addresses:
-                print("Hit breakpoint at 0x{:08x}".format(pc))
+            if hit_breakpoint():
                 break
 
         print("Min SP: 0x{:08x}".format(sp_min))
