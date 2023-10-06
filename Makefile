@@ -62,16 +62,22 @@ ARM_CORTEXM_SYSROOT := \
 ARM_CORTEXM_MULTI_DIR := \
   $(shell $(ARM_CC) $(ARCHFLAGS) -print-multi-directory 2>&1)
 
+# this is pretty fragile
+ARCHFLAGS_ := $(patsubst -mcpu=cortex-%,-mcpu=cortex_%,$(ARCHFLAGS))
+
 CFLAGS += \
   --sysroot=$(ARM_CORTEXM_SYSROOT) \
-  --target=arm-none-eabi
+  -I$(ARM_CORTEXM_SYSROOT)/include \
+
+
+  # --target=arm-none-eabi
 
 LDFLAGS += \
   -L$(ARM_CORTEXM_SYSROOT)/lib/$(ARM_CORTEXM_MULTI_DIR)
 endif
 
 CFLAGS += \
-  $(ARCHFLAGS) \
+  $(ARCHFLAGS_) \
   -Os -ggdb3 -std=gnu11 \
   -fdebug-prefix-map=$(abspath .)=. \
   -I. \
@@ -81,14 +87,15 @@ CFLAGS += \
   -Werror \
   -Wall \
   -Wextra \
-  -Wundef \
+  -Wno-error=undef \
+  -Wno-error=unused-command-line-argument \
 
 CFLAGS += $(CFLAGS_WARNINGS)
 
 ifeq ($(ENABLE_MEMFAULT),1)
 include Makefile-memfault.mk
 
-LDFLAGS += -Wl,--wrap=malloc,--wrap=free
+# LDFLAGS += -Wl,--wrap=malloc,--wrap=free
 
 endif
 
@@ -121,7 +128,8 @@ LDFLAGS += \
 
 # Specifiy --buil-id=sha1 - the default when using lld is 'fast', which is not
 # compatible with the default ld uses, 'sha1', so explicitly set it!
-LDFLAGS += -Wl,--gc-sections,-Map,$(TARGET).map,--build-id=sha1
+# LDFLAGS += -Wl,--gc-sections,-Map,$(TARGET).map,--build-id=sha1
+LDFLAGS += -Wl,--gc-sections,--build-id=sha1
 
 ifeq ($(USING_CLANG),)
 # print memory usage if linking with gnu ld
@@ -187,18 +195,24 @@ $(BUILDDIR)/%.o: %.c $(BUILDDIR)/cflags
 	$(info Compiling $<)
 	$(CC) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
 
+LINKER_SCRIPT := $(DEFAULT_LINKER_SCRIPT)
+
 ifeq ($(LINKER_SCRIPT),$(DEFAULT_LINKER_SCRIPT))
 # Populate ROM + RAM region values as linker args from device.mk
 LD_TEMPLATE_VARS := ROM_ORIGIN ROM_LENGTH RAM_ORIGIN RAM_LENGTH
-LD_TEMPLATE_LDFLAGS = \
-  $(foreach t_,$(LD_TEMPLATE_VARS),-Wl,--defsym=$(t_)=$($(t_)))
-LDFLAGS += $(LD_TEMPLATE_LDFLAGS)
+# LD_TEMPLATE_LDFLAGS = \
+#   $(foreach t_,$(LD_TEMPLATE_VARS),-Wl,--defsym=$(t_)=$($(t_)))
+# LDFLAGS += $(LD_TEMPLATE_LDFLAGS)
+
+LD_TEMPLATE_CFLAGS = \
+   $(foreach t_,$(LD_TEMPLATE_VARS),-D$(t_)=$($(t_)))
+
 endif
 
 $(BUILDDIR)/link.ld: devices/cortex-m-generic.ld.template
 	$(info Generating linker script $@)
 	mkdir -p $(dir $@)
-	gcc $(LD_TEMPLATE_CFLAGS) -E -P -C -x c -o $@ $<
+	gcc $(LD_TEMPLATE_CFLAGS) -E -nostdinc -P -C -x c -o $@ $<
 
 $(TARGET): $(LINKER_SCRIPT) $(OBJS)
 	$(info Linking $@)

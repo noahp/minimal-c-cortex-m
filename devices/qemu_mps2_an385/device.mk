@@ -7,6 +7,7 @@ _THIS_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 
 ARCHFLAGS += \
   -mcpu=cortex-m3 \
+  -mfloat-abi=soft \
   -include $(_THIS_DIR)/qemu_mps2_an385.h \
   -DSYSTEM_INIT_HANDLER=uart_init
 
