@@ -32,7 +32,8 @@ FLAGS = \
   ENABLE_RTT \
   ENABLE_MEMFAULT \
   ENABLE_MEMFAULT_METRICS \
-  ENABLE_MEMFAULT_DEMO
+  ENABLE_MEMFAULT_DEMO \
+  ENABLE_MEMFAULT_HEAP_TRACKING \
 
 CFLAGS += $(foreach flag,$(FLAGS),-D$(flag)=$(or $(findstring 1,$($(flag))),0))
 
@@ -88,7 +89,9 @@ CFLAGS += $(CFLAGS_WARNINGS)
 ifeq ($(ENABLE_MEMFAULT),1)
 include Makefile-memfault.mk
 
+ifeq ($(ENABLE_MEMFAULT_HEAP_TRACKING),1)
 LDFLAGS += -Wl,--wrap=malloc,--wrap=free
+endif
 
 endif
 
