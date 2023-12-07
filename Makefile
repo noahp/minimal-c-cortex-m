@@ -13,7 +13,8 @@ ifdef CCACHE
 CC := ccache $(CC)
 endif
 
-SIZE = arm-none-eabi-size
+GDB ?= arm-none-eabi-gdb
+SIZE ?= $(CC) -print-prog-name=size
 RM = rm -rf
 
 # .gdb-startup assumes the elf is here
@@ -212,6 +213,6 @@ debug: $(TARGET)
 	$(DEBUG_CMD)
 
 gdb: $(TARGET)
-	arm-none-eabi-gdb-py $(TARGET) -ex "source .gdb-startup" -ex $(GDB_RELOAD_CMD)
+	$(GDB) $(TARGET) -ex "source .gdb-startup" -ex $(GDB_RELOAD_CMD)
 
 .PHONY: all clean debug gdb
