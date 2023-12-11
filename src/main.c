@@ -44,6 +44,16 @@ static sMemfaultShellImpl memfault_shell_impl = {
 #endif
 #endif
 
+// Silence linker warnings in newer versions of newlibc
+void _close(void) {
+}
+void _fstat(void) {
+}
+void _isatty(void) {
+}
+void _lseek(void) {
+}
+
 int main(void) {
 #if ENABLE_SEMIHOSTING
   initialise_monitor_handles();
@@ -78,6 +88,8 @@ int main(void) {
 #endif
       memfault_demo_shell_receive_char(c);
     }
+#elif ENABLE_MEMFAULT
+    memfault_data_export_dump_chunks();
 #endif
   };
 

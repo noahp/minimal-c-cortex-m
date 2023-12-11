@@ -139,6 +139,9 @@ const sMfltCoredumpRegion *memfault_platform_coredump_get_regions(
 // you want but you will want it to be able to hold at least a couple logs.
 static uint8_t s_log_buf_storage[512];
 
+// static RAM storage where events will be stored
+static uint8_t s_event_storage[1024];
+
 //! !FIXME: This function _must_ be called by your main() routine prior
 //! to starting an RTOS or baremetal loop.
 int memfault_platform_boot(void) {
@@ -151,7 +154,6 @@ int memfault_platform_boot(void) {
   memfault_platform_reboot_tracking_boot();
   memfault_log_boot(s_log_buf_storage, sizeof(s_log_buf_storage));
 
-  static uint8_t s_event_storage[1024];
   const sMemfaultEventStorageImpl *evt_storage =
       memfault_events_storage_boot(s_event_storage, sizeof(s_event_storage));
   memfault_trace_event_boot(evt_storage);
