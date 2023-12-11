@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+set -eou pipefail
+
 MFLT_SDK_DIR=third-party/memfault-firmware-sdk
 
-TAGS=$(git -C ${MFLT_SDK_DIR} tag --sort=v:refname | awk '/0.27.1/{flag=1} flag')
+TAGS=$(git -C ${MFLT_SDK_DIR} tag --sort=v:refname | awk '/0.15.0/{flag=1} flag')
 
 echo "" > sizes.txt
 

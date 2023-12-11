@@ -22,13 +22,17 @@ extern void initialise_monitor_handles(void);
 extern void __real_free(void *ptr);
 extern void *__real_malloc(size_t size);
 void __wrap_free(void *ptr) {
+  #if defined(MEMFAULT_HEAP_STATS_FREE)  // compatibility with older SDKs
   MEMFAULT_HEAP_STATS_FREE(ptr);
+  #endif
   __real_free(ptr);
 }
 
 void *__wrap_malloc(size_t size) {
   void *ptr = __real_malloc(size);
+  #if defined(MEMFAULT_HEAP_STATS_MALLOC)  // compatibility with older SDKs
   MEMFAULT_HEAP_STATS_MALLOC(ptr, size);
+  #endif
   return ptr;
 }
 #if ENABLE_MEMFAULT_DEMO
