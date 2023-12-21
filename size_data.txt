@@ -1,0 +1,277 @@
+00000000 A ROM_ORIGIN
+00000000 00000010 T vector_table	./src/interrupts.c
+00000010 0000000e T uart_init	././devices/qemu_mps2_an385/uart.c
+0000001e 0000001e T _read	././devices/qemu_mps2_an385/uart.c
+0000003c 00000020 T _write	././devices/qemu_mps2_an385/uart.c
+0000005c 00000010 W memfault_platform_halt_if_debugging	./third-party/memfault-firmware-sdk/components/core/src/arch_arm_cortex_m.c
+0000006c 00000034 T memfault_build_info_read	./third-party/memfault-firmware-sdk/components/core/src/memfault_core_utils.c
+000000a0 00000070 T memfault_build_info_dump	./third-party/memfault-firmware-sdk/components/core/src/memfault_core_utils.c
+00000110 00000064 T memfault_device_info_dump	./third-party/memfault-firmware-sdk/components/core/src/memfault_core_utils.c
+00000174 0000001a T memfault_data_export_chunk	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_export.c
+00000190 0000000c W memfault_data_export_base64_encoded_chunk	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_export.c
+0000019c 0000005c t prv_memfault_data_export_chunk	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_export.c
+000001f8 00000020 T memfault_data_export_dump_chunks	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_export.c
+00000218 00000008 t prv_data_source_has_event_stub	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_packetizer.c
+00000220 00000004 t prv_data_source_read_stub	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_packetizer.c
+00000224 00000002 t prv_data_source_mark_event_read_stub	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_packetizer.c
+00000228 00000068 t prv_data_source_chunk_transport_msg_reader	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_packetizer.c
+00000290 00000004 W memfault_data_source_rle_encoder_set_active	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_packetizer.c
+00000294 00000018 t prv_reset_packetizer_state	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_packetizer.c
+000002ac 00000078 t prv_get_source_with_data	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_packetizer.c
+00000324 00000044 T memfault_packetizer_get_next	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_packetizer.c
+00000368 0000008c T memfault_packetizer_begin	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_packetizer.c
+000003f4 0000002a T memfault_packetizer_get_chunk	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_packetizer.c
+00000420 0000001c t prv_get_size_cb	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+0000043c 00000018 t prv_get_total_event_size.constprop.0	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+00000454 000000b4 t prv_event_storage_read_ram	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+00000508 00000004 t prv_event_storage_read	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+0000050c 00000002 W memfault_lock	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+0000050e 00000002 W memfault_unlock	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+00000510 00000030 t prv_event_storage_storage_append_data	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+00000540 0000004c t prv_event_storage_storage_begin_write	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+0000058c 0000007c t prv_has_data_ram	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+00000608 00000004 t prv_has_event	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+0000060c 00000028 t prv_event_storage_mark_event_read_ram.part.0	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+00000634 00000010 t prv_event_storage_mark_event_read	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+00000644 00000002 W memfault_event_storage_request_persist_callback	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+00000648 00000068 t prv_event_storage_storage_finish_write	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+000006b0 00000030 T memfault_events_storage_boot	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+000006e0 0000004c T memfault_log_boot	./third-party/memfault-firmware-sdk/components/core/src/memfault_log.c
+0000072c 0000004c t prv_check_or_init_struct	./third-party/memfault-firmware-sdk/components/core/src/memfault_ram_reboot_info_tracking.c
+00000778 00000040 t prv_record_reboot_event	./third-party/memfault-firmware-sdk/components/core/src/memfault_ram_reboot_info_tracking.c
+000007b8 00000050 T memfault_reboot_tracking_boot	./third-party/memfault-firmware-sdk/components/core/src/memfault_ram_reboot_info_tracking.c
+00000808 0000001a T memfault_reboot_tracking_mark_reset_imminent	./third-party/memfault-firmware-sdk/components/core/src/memfault_ram_reboot_info_tracking.c
+00000824 00000044 T memfault_reboot_tracking_read_reset_info	./third-party/memfault-firmware-sdk/components/core/src/memfault_ram_reboot_info_tracking.c
+00000868 00000014 T memfault_reboot_tracking_get_crash_count	./third-party/memfault-firmware-sdk/components/core/src/memfault_ram_reboot_info_tracking.c
+0000087c 0000003c T memfault_reboot_tracking_clear_reset_info	./third-party/memfault-firmware-sdk/components/core/src/memfault_ram_reboot_info_tracking.c
+000008b8 00000018 T memfault_reboot_tracking_mark_coredump_saved	./third-party/memfault-firmware-sdk/components/core/src/memfault_ram_reboot_info_tracking.c
+000008d0 00000038 T memfault_reboot_tracking_get_unexpected_reboot_occurred	./third-party/memfault-firmware-sdk/components/core/src/memfault_ram_reboot_info_tracking.c
+00000908 00000034 T memfault_reboot_tracking_compute_worst_case_storage_size	./third-party/memfault-firmware-sdk/components/core/src/memfault_reboot_tracking_serializer.c
+0000093c 00000052 t prv_encode_cb	./third-party/memfault-firmware-sdk/components/core/src/memfault_reboot_tracking_serializer.c
+00000990 0000005c T memfault_reboot_tracking_collect_reset_info	./third-party/memfault-firmware-sdk/components/core/src/memfault_reboot_tracking_serializer.c
+000009ec 00000002 W memfault_sdk_assert_func_noreturn	./third-party/memfault-firmware-sdk/components/core/src/memfault_sdk_assert.c
+000009ee 0000000a T memfault_sdk_assert_func	./third-party/memfault-firmware-sdk/components/core/src/memfault_sdk_assert.c
+000009f8 00000010 t prv_encoder_write_cb	./third-party/memfault-firmware-sdk/components/core/src/memfault_serializer_helper.c
+00000a08 0000001a t prv_encode_event_key_string_pair	./third-party/memfault-firmware-sdk/components/core/src/memfault_serializer_helper.c
+00000a22 0000001a T memfault_serializer_helper_encode_uint32_kv_pair	./third-party/memfault-firmware-sdk/components/core/src/memfault_serializer_helper.c
+00000a3c 0000001a T memfault_serializer_helper_encode_int32_kv_pair	./third-party/memfault-firmware-sdk/components/core/src/memfault_serializer_helper.c
+00000a56 0000001e T memfault_serializer_helper_encode_byte_string_kv_pair	./third-party/memfault-firmware-sdk/components/core/src/memfault_serializer_helper.c
+00000a74 000000de T memfault_serializer_helper_encode_metadata_with_time	./third-party/memfault-firmware-sdk/components/core/src/memfault_serializer_helper.c
+00000b52 00000022 T memfault_serializer_helper_encode_metadata	./third-party/memfault-firmware-sdk/components/core/src/memfault_serializer_helper.c
+00000b74 0000007a T memfault_serializer_helper_encode_trace_event	./third-party/memfault-firmware-sdk/components/core/src/memfault_serializer_helper.c
+00000bf0 00000064 T memfault_serializer_helper_encode_to_storage	./third-party/memfault-firmware-sdk/components/core/src/memfault_serializer_helper.c
+00000c54 0000001c T memfault_serializer_helper_compute_size	./third-party/memfault-firmware-sdk/components/core/src/memfault_serializer_helper.c
+00000c70 00000016 T memfault_serializer_helper_check_storage_size	./third-party/memfault-firmware-sdk/components/core/src/memfault_serializer_helper.c
+00000c86 0000006c t prv_encode_cb	./third-party/memfault-firmware-sdk/components/core/src/memfault_trace_event.c
+00000cf4 00000044 T memfault_trace_event_compute_worst_case_storage_size	./third-party/memfault-firmware-sdk/components/core/src/memfault_trace_event.c
+00000d38 00000030 T memfault_trace_event_boot	./third-party/memfault-firmware-sdk/components/core/src/memfault_trace_event.c
+00000d68 0000006c T memfault_base64_encode	./third-party/memfault-firmware-sdk/components/util/src/memfault_base64.c
+00000dd4 00000112 T memfault_chunk_transport_get_next_chunk	./third-party/memfault-firmware-sdk/components/util/src/memfault_chunk_transport.c
+00000ee6 0000000c T memfault_chunk_transport_get_chunk_info	./third-party/memfault-firmware-sdk/components/util/src/memfault_chunk_transport.c
+00000ef2 00000068 t prv_write_at_offset_from_end	./third-party/memfault-firmware-sdk/components/util/src/memfault_circular_buffer.c
+00000f5a 0000002c T memfault_circular_buffer_init	./third-party/memfault-firmware-sdk/components/util/src/memfault_circular_buffer.c
+00000f86 0000004c T memfault_circular_buffer_read	./third-party/memfault-firmware-sdk/components/util/src/memfault_circular_buffer.c
+00000fd2 00000026 T memfault_circular_buffer_consume	./third-party/memfault-firmware-sdk/components/util/src/memfault_circular_buffer.c
+00000ff8 00000014 T memfault_circular_buffer_consume_from_end	./third-party/memfault-firmware-sdk/components/util/src/memfault_circular_buffer.c
+0000100c 0000000a T memfault_circular_buffer_get_write_size	./third-party/memfault-firmware-sdk/components/util/src/memfault_circular_buffer.c
+00001016 0000000a T memfault_circular_buffer_write	./third-party/memfault-firmware-sdk/components/util/src/memfault_circular_buffer.c
+00001020 00000004 T memfault_circular_buffer_write_at_offset	./third-party/memfault-firmware-sdk/components/util/src/memfault_circular_buffer.c
+00001024 00000006 T memfault_circular_buffer_get_read_size	./third-party/memfault-firmware-sdk/components/util/src/memfault_circular_buffer.c
+0000102a 0000002c T memfault_crc16_ccitt_compute	./third-party/memfault-firmware-sdk/components/util/src/memfault_crc16_ccitt.c
+00001056 0000002e t prv_add_to_result_buffer	./third-party/memfault-firmware-sdk/components/util/src/memfault_minimal_cbor.c
+00001084 00000076 t prv_encode_unsigned_integer	./third-party/memfault-firmware-sdk/components/util/src/memfault_minimal_cbor.c
+000010fa 00000022 T memfault_cbor_encoder_init	./third-party/memfault-firmware-sdk/components/util/src/memfault_minimal_cbor.c
+0000111c 0000000a T memfault_cbor_encoder_size_only_init	./third-party/memfault-firmware-sdk/components/util/src/memfault_minimal_cbor.c
+00001126 00000010 T memfault_cbor_encoder_deinit	./third-party/memfault-firmware-sdk/components/util/src/memfault_minimal_cbor.c
+00001136 00000008 T memfault_cbor_encode_unsigned_integer	./third-party/memfault-firmware-sdk/components/util/src/memfault_minimal_cbor.c
+0000113e 0000000a T memfault_cbor_encode_signed_integer	./third-party/memfault-firmware-sdk/components/util/src/memfault_minimal_cbor.c
+00001148 00000020 T memfault_cbor_encode_byte_string	./third-party/memfault-firmware-sdk/components/util/src/memfault_minimal_cbor.c
+00001168 0000002a T memfault_cbor_encode_string	./third-party/memfault-firmware-sdk/components/util/src/memfault_minimal_cbor.c
+00001192 00000008 T memfault_cbor_encode_dictionary_begin	./third-party/memfault-firmware-sdk/components/util/src/memfault_minimal_cbor.c
+0000119a 00000008 T memfault_cbor_encode_array_begin	./third-party/memfault-firmware-sdk/components/util/src/memfault_minimal_cbor.c
+000011a2 00000016 T memfault_cbor_encode_null	./third-party/memfault-firmware-sdk/components/util/src/memfault_minimal_cbor.c
+000011b8 00000024 T memfault_encode_varint_u32	./third-party/memfault-firmware-sdk/components/util/src/memfault_varint.c
+000011dc 00000004 W memfault_coredump_read	./third-party/memfault-firmware-sdk/components/panics/src/memfault_coredump.c
+000011e0 00000042 t prv_get_info_and_header	./third-party/memfault-firmware-sdk/components/panics/src/memfault_coredump.c
+00001222 00000028 t prv_platform_coredump_write	./third-party/memfault-firmware-sdk/components/panics/src/memfault_coredump.c
+0000124a 000000be t prv_write_block_with_address	./third-party/memfault-firmware-sdk/components/panics/src/memfault_coredump.c
+00001308 00000012 t prv_write_non_memory_block	./third-party/memfault-firmware-sdk/components/panics/src/memfault_coredump.c
+0000131a 0000007e t prv_write_regions	./third-party/memfault-firmware-sdk/components/panics/src/memfault_coredump.c
+00001398 00000038 T memfault_coredump_has_valid_coredump	./third-party/memfault-firmware-sdk/components/panics/src/memfault_coredump.c
+000013d0 00000004 W memfault_platform_coredump_save_begin	./third-party/memfault-firmware-sdk/components/panics/src/memfault_coredump.c
+000013d4 000001ec t prv_write_coredump_sections	./third-party/memfault-firmware-sdk/components/panics/src/memfault_coredump.c
+000015c0 00000010 T memfault_coredump_save	./third-party/memfault-firmware-sdk/components/panics/src/memfault_coredump.c
+000015d0 0000000c T memfault_coredump_get_arch_regions	./third-party/memfault-firmware-sdk/components/panics/src/memfault_coredump_regions_armv7.c
+000015dc 00000008 T memfault_coredump_get_sdk_regions	./third-party/memfault-firmware-sdk/components/panics/src/memfault_coredump_sdk_regions.c
+000015e4 00000002 W memfault_platform_fault_handler	./third-party/memfault-firmware-sdk/components/panics/src/memfault_fault_handling_arm.c
+000015e8 000000dc T memfault_fault_handler	./third-party/memfault-firmware-sdk/components/panics/src/memfault_fault_handling_arm.c
+000016c4 0000001a T HardFault_Handler	./third-party/memfault-firmware-sdk/components/panics/src/memfault_fault_handling_arm.c
+000016e4 0000001a T NMI_Handler	./third-party/memfault-firmware-sdk/components/panics/src/memfault_fault_handling_arm.c
+00001704 0000002c t prv_read_write_is_value_set	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+00001730 00000078 t prv_find_value_for_key	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+000017a8 0000003c t prv_metric_iterator	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+000017e4 0000002c t prv_metrics_heartbeat_iterate_cb	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+00001810 00000012 t prv_get_num_metrics_iter_cb	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+00001822 0000005e t prv_update_timer_metric	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+00001880 00000012 t prv_tally_and_update_timer_cb	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+00001894 00000050 t prv_reset_metrics.constprop.0	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+000018e4 0000003e t prv_find_and_set_value_for_key	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+00001922 0000003c t prv_find_timer_metric_and_update	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+0000195e 00000002 W memfault_metrics_heartbeat_collect_data	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+00001960 00000002 W memfault_metrics_heartbeat_collect_sdk_data	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+00001964 00000030 t prv_heartbeat_timer	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+00001994 00000022 T memfault_metrics_heartbeat_set_unsigned	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+000019b6 0000001a T memfault_metrics_heartbeat_timer_start	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+000019d0 00000094 T memfault_metrics_heartbeat_add	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+00001a64 00000024 T memfault_metrics_heartbeat_iterate	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+00001a88 00000020 T memfault_metrics_session_get_num_metrics	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+00001aa8 00000074 T memfault_metrics_boot	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+00001b1c 00000064 T memfault_metrics_reliability_collect	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics_reliability.c
+00001b80 0000002c t prv_compute_worst_case_size	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics_serializer.c
+00001bac 00000068 t prv_encode_cb	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics_serializer.c
+00001c14 0000006a t prv_metric_heartbeat_writer	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics_serializer.c
+00001c7e 00000006 T memfault_metrics_heartbeat_compute_worst_case_storage_size	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics_serializer.c
+00001c84 0000002c T memfault_metrics_session_serialize	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics_serializer.c
+00001cb0 00000006 T memfault_metrics_heartbeat_serialize	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics_serializer.c
+00001cb8 00000014 T memfault_platform_get_device_info	./src/memfault_platform_port.c
+00001ccc 00000024 T memfault_platform_reboot	./src/memfault_platform_port.c
+00001cf0 00000010 T memfault_platform_time_get_current	./src/memfault_platform_port.c
+00001d00 00000034 T memfault_platform_coredump_get_regions	./src/memfault_platform_port.c
+00001d34 00000020 T memfault_platform_log_raw	./src/memfault_platform_port.c
+00001d54 00000004 T memfault_platform_metrics_timer_boot	./src/memfault_platform_port.c
+00001d58 00000006 T memfault_platform_get_time_since_boot_ms	./src/memfault_platform_port.c
+00001d60 0000001c W memfault_platform_reboot_tracking_boot	./src/memfault_platform_port.c
+00001d7c 0000004c T memfault_platform_boot	./src/memfault_platform_port.c
+00001dc8 0000000c T memfault_platform_coredump_storage_get_info	./third-party/memfault-firmware-sdk/ports/panics/src/memfault_platform_ram_backed_coredump.c
+00001dd4 00000030 T memfault_platform_coredump_storage_read	./third-party/memfault-firmware-sdk/ports/panics/src/memfault_platform_ram_backed_coredump.c
+00001e04 0000002c T memfault_platform_coredump_storage_erase	./third-party/memfault-firmware-sdk/ports/panics/src/memfault_platform_ram_backed_coredump.c
+00001e30 0000002c T memfault_platform_coredump_storage_write	./third-party/memfault-firmware-sdk/ports/panics/src/memfault_platform_ram_backed_coredump.c
+00001e5c 00000018 T memfault_platform_coredump_storage_clear	./third-party/memfault-firmware-sdk/ports/panics/src/memfault_platform_ram_backed_coredump.c
+00001e74 00000002 T _close	./src/main.c
+00001e76 00000002 T _fstat	./src/main.c
+00001e78 00000002 T _isatty	./src/main.c
+00001e7a 00000002 T _lseek	./src/main.c
+00001e7c 0000002c T main	./src/main.c
+00001ea8 00000044 t prv_cinit	./src/interrupts.c
+00001eec 00000010 T Reset_Handler	./src/interrupts.c
+00001efc 0000002a t __sfputc_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/nano-vfprintf.c
+00001f26 00000024 T __sfputs_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/nano-vfprintf.c
+00001f4c 00000230 T _vfiprintf_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/nano-vfprintf.c
+00001f4c 00000230 T _vfprintf_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/stdio.h
+0000217c 00000014 T viprintf	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/vprintf.c
+0000217c 00000014 T vprintf	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/stdio.h
+00002190 0000007c T __swbuf_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/stdio.h
+0000220c 000000ac T __swsetup_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/wsetup.c
+000022b8 00000010 T putchar	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/stdio.h
+000022c8 000000e4 T _printf_common	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/nano-vfprintf_i.c
+000023ac 0000025c T _printf_i	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/nano-vfprintf_i.c
+00002608 000000aa T _puts_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/stdio.h
+000026b4 00000010 T puts	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/stdio.h
+000026c4 00000100 T __sflush_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/fflush.c
+000027c4 00000050 T _fflush_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/stdio.h
+00002814 0000001c T memchr	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/string.h
+00002830 0000001c T memcpy	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/string.h
+0000284c 00000010 T strlen	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/machine/arm/strlen-thumb2-Os.S
+0000285c 00000048 t std	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/findfp.c
+000028a4 00000018 t stdio_exit_handler	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/findfp.c
+000028bc 00000040 t cleanup_stdio	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/findfp.c
+000028fc 0000003c t global_stdio_init.part.0	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/findfp.c
+00002938 0000000c T __sfp_lock_acquire	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/findfp.c
+00002944 0000000c T __sfp_lock_release	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/findfp.c
+00002950 00000030 T __sinit	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/findfp.c
+00002980 00000168 T setvbuf	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/stdio.h
+00002ae8 00000022 T __sread	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/stdio.c
+00002b0a 00000038 T __swrite	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/stdio.c
+00002b42 00000024 T __sseek	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/stdio.c
+00002b66 00000008 T __sclose	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/stdio.c
+00002b70 00000024 T _write_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/reent.h
+00002b94 0000003c T _fwalk_sglue	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/sys/reent.h
+00002bd0 00000010 T memset	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/string.h
+00002be0 00000090 T _free_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/malloc.h
+00002c70 00000002 T __retarget_lock_acquire_recursive	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/sys/lock.h
+00002c72 00000002 T __retarget_lock_release_recursive	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/sys/lock.h
+00002c74 0000004a T __swhatbuf_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/makebuf.c
+00002cbe 00000078 T __smakebuf_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdio/makebuf.c
+00002d36 00000068 T _putc_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/stdio.h
+00002da0 00000020 T _close_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/reent.h
+00002dc0 00000010 T malloc	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/malloc.h
+00002dd0 00000044 t sbrk_aligned	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdlib/nano-mallocr.c
+00002e14 000000e0 T _malloc_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/malloc.h
+00002ef4 00000024 T _fstat_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/reent.h
+00002f18 00000020 T _isatty_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/reent.h
+00002f38 00000024 T _lseek_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/reent.h
+00002f5c 00000024 T _read_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/reent.h
+00002f80 0000000c T __malloc_lock	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/malloc.h
+00002f8c 0000000c T __malloc_unlock	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/malloc.h
+00002f98 00000020 T _sbrk_r	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/reent.h
+00002fb8 0000001c T _sbrk	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/libgloss/libnosys/sbrk.c
+00002fd4 0000000c T g_memfault_build_id	./third-party/memfault-firmware-sdk/components/core/src/memfault_build_id.c
+00003040 00000020 t s_memfault_data_source	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_packetizer.c
+00003060 0000000c V g_memfault_cdr_source	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_packetizer.c
+0000306c 0000000c V g_memfault_log_data_source	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_packetizer.c
+00003078 0000000c V g_memfault_data_rle_source	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_packetizer.c
+00003084 00000010 t s_event_storage_impl.2
+00003094 0000000c T g_memfault_event_data_source	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+0000310c 0000000c T g_memfault_coredump_data_source	./third-party/memfault-firmware-sdk/components/panics/src/memfault_coredump.c
+00003118 0000000c t s_coredump_regions.0
+0000312c 00000010 t s_metric_timer_metadata_mapping	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+0000313c 00000004 t s_memfault_heartbeat_string_values	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+00003140 00000004 t s_memfault_heartbeat_string_key_to_index	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+00003144 00000004 t s_memfault_heartbeat_key_to_valueindex	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+00003148 00000050 t s_memfault_heartbeat_keys	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+00003218 R __start_gnu_build_id_start
+0000323c R __exidx_start
+0000323c D __fini_array_end
+0000323c D __fini_array_start
+0000323c D __init_array_end
+0000323c D __init_array_start
+0000323c D __preinit_array_end
+0000323c D __preinit_array_start
+00003244 A _data_loadaddr
+00003244 B _etext
+00003244 R __exidx_end
+00400000 A RAM_LENGTH
+00400000 A ROM_LENGTH
+20000000 A RAM_ORIGIN
+20000000 00000040 b s_reboot_tracking	./src/memfault_platform_port.c
+20000040 00001f40 b s_ram_backed_coredump_region	./third-party/memfault-firmware-sdk/ports/panics/src/memfault_platform_ram_backed_coredump.c
+20001f80 D _data
+20001f80 00000004 d s_active_data_sources	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_packetizer.c
+20001f84 0000001f d device_serial	./src/memfault_platform_port.c
+20001fa4 00000004 D _impure_ptr	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/sys/reent.h
+20001fa8 0000004c D _impure_data	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/sys/reent.h
+20001ff4 0000000c D __sglue	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/sys/reent.h
+20002000 B _bss
+20002000 D _edata
+20002000 00000028 b s_mflt_packetizer_state	./third-party/memfault-firmware-sdk/components/core/src/memfault_data_packetizer.c
+20002028 00000014 b s_event_storage_read_state	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+2000203c 00000008 b s_event_storage_write_state	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+20002044 00000010 b s_event_storage	./third-party/memfault-firmware-sdk/components/core/src/memfault_event_storage.c
+20002054 00000028 b s_memfault_ram_logger	./third-party/memfault-firmware-sdk/components/core/src/memfault_log.c
+2000207c 00000006 b s_reboot_reason_data	./third-party/memfault-firmware-sdk/components/core/src/memfault_ram_reboot_info_tracking.c
+20002084 00000004 b s_mflt_reboot_info	./third-party/memfault-firmware-sdk/components/core/src/memfault_ram_reboot_info_tracking.c
+20002088 00000004 b s_last_drop_count	./third-party/memfault-firmware-sdk/components/core/src/memfault_serializer_helper.c
+2000208c 00000004 b s_num_storage_drops	./third-party/memfault-firmware-sdk/components/core/src/memfault_serializer_helper.c
+20002090 00000004 b s_memfault_trace_event_ctx	./third-party/memfault-firmware-sdk/components/core/src/memfault_trace_event.c
+20002094 00000002 b s_crash_reason	./third-party/memfault-firmware-sdk/components/panics/src/memfault_fault_handling_arm.c
+20002098 00000004 b s_memfault_metrics_ctx	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+2000209c 00000008 b s_memfault_heartbeat_timer_values_metadata	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+200020a4 00000001 b s_memfault_heatbeat_value_is_set_flags	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+200020a8 00000010 b s_memfault_heartbeat_values	./third-party/memfault-firmware-sdk/components/metrics/src/memfault_metrics.c
+200020b8 00000001 b s_memfault_counted_unexpected_reboot.0
+200020bc 00000004 b s_memfault_operational_ms.1
+200020c0 00000004 b s_memfault_last_heartbeat_ms.2
+200020c4 00000018 b s_coredump_regions.0
+200020dc 00000400 b s_event_storage	./src/memfault_platform_port.c
+200024dc 00000200 b s_log_buf_storage	./src/memfault_platform_port.c
+200026dc 00000138 B __sf	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/sys/reent.h
+20002814 00000004 B __stdio_exit_handler	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/include/sys/reent.h
+20002818 00000001 B __lock___malloc_recursive_mutex	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/misc/lock.c
+20002819 00000001 B __lock___sfp_recursive_mutex	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/misc/lock.c
+2000281c 00000004 B errno	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/reent/reent.c
+20002820 00000004 B __malloc_sbrk_start	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdlib/nano-mallocr.c
+20002824 00000004 B __malloc_free_list	/data/jenkins/workspace/GNU-toolchain/arm-12-mpacbti/src/newlib-cygwin/newlib/libc/stdlib/nano-mallocr.c
+20002828 00000004 b heap_end.0
+2000282c B _ebss
+2000282c B end
+20400000 B _stack
